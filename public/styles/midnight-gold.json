@@ -1,0 +1,122 @@
+{
+  "version": 8,
+  "name": "Midnight Gold",
+  "sources": {
+    "openmaptiles": {
+      "type": "vector",
+      "url": "https://tiles.openfreemap.org/planet"
+    }
+  },
+  "layers": [
+    {
+      "id": "background",
+      "type": "background",
+      "paint": {
+        "background-color": "#0f0f0f"
+      }
+    },
+    {
+      "id": "water",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "water",
+      "paint": {
+        "fill-color": "#1a1a1a",
+        "fill-outline-color": "#2d2d2d"
+      }
+    },
+    {
+      "id": "landcover",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "landcover",
+      "paint": {
+        "fill-color": "#171717",
+        "fill-opacity": 0.7
+      }
+    },
+    {
+      "id": "park",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "landuse",
+      "filter": ["==", "class", "park"],
+      "paint": {
+        "fill-color": "#1c1c1c",
+        "fill-opacity": 0.8
+      }
+    },
+    {
+      "id": "road-street",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+      "paint": {
+        "line-color": "#8b6914",
+        "line-width": 1.5,
+        "line-opacity": 0.6
+      }
+    },
+    {
+      "id": "road-primary",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+      "filter": ["in", "class", "primary", "secondary", "trunk", "motorway"],
+      "paint": {
+        "line-color": "#eab308",
+        "line-width": 3,
+        "line-opacity": 0.6
+      }
+    },
+    {
+      "id": "building",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "building",
+      "paint": {
+        "fill-color": "#262626",
+        "fill-opacity": 0.9,
+        "fill-outline-color": "#404040"
+      }
+    },
+    {
+      "id": "place-labels",
+      "type": "symbol",
+      "source": "openmaptiles",
+      "source-layer": "place",
+      "filter": ["in", "class", "city", "town", "village", "suburb", "neighbourhood"],
+      "layout": {
+        "text-field": "{name}",
+        "text-font": ["Noto Sans Regular"],
+        "text-size": ["interpolate", ["linear"], ["zoom"], 8, 12, 14, 18],
+        "text-transform": "uppercase",
+        "text-letter-spacing": 0.1,
+        "visibility": "none"
+      },
+      "paint": {
+        "text-color": "#fcd34d",
+        "text-halo-color": "#0f0f0f",
+        "text-halo-width": 2
+      }
+    },
+    {
+      "id": "road-labels",
+      "type": "symbol",
+      "source": "openmaptiles",
+      "source-layer": "transportation_name",
+      "layout": {
+        "text-field": "{name}",
+        "text-font": ["Noto Sans Regular"],
+        "text-size": 10,
+        "symbol-placement": "line",
+        "visibility": "none"
+      },
+      "paint": {
+        "text-color": "#fde68a",
+        "text-halo-color": "#0f0f0f",
+        "text-halo-width": 1
+      }
+    }
+  ]
+}

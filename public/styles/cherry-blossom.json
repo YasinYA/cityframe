@@ -1,0 +1,122 @@
+{
+  "version": 8,
+  "name": "Cherry Blossom",
+  "sources": {
+    "openmaptiles": {
+      "type": "vector",
+      "url": "https://tiles.openfreemap.org/planet"
+    }
+  },
+  "layers": [
+    {
+      "id": "background",
+      "type": "background",
+      "paint": {
+        "background-color": "#fff1f2"
+      }
+    },
+    {
+      "id": "water",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "water",
+      "paint": {
+        "fill-color": "#fecdd3",
+        "fill-outline-color": "#fda4af"
+      }
+    },
+    {
+      "id": "landcover",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "landcover",
+      "paint": {
+        "fill-color": "#ffe4e6",
+        "fill-opacity": 0.6
+      }
+    },
+    {
+      "id": "park",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "landuse",
+      "filter": ["==", "class", "park"],
+      "paint": {
+        "fill-color": "#fbcfe8",
+        "fill-opacity": 0.5
+      }
+    },
+    {
+      "id": "road-street",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+      "paint": {
+        "line-color": "#be123c",
+        "line-width": 1.5,
+        "line-opacity": 0.45
+      }
+    },
+    {
+      "id": "road-primary",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+      "filter": ["in", "class", "primary", "secondary", "trunk", "motorway"],
+      "paint": {
+        "line-color": "#e11d48",
+        "line-width": 2.5,
+        "line-opacity": 0.8
+      }
+    },
+    {
+      "id": "building",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "building",
+      "paint": {
+        "fill-color": "#fecdd3",
+        "fill-opacity": 0.5,
+        "fill-outline-color": "#fda4af"
+      }
+    },
+    {
+      "id": "place-labels",
+      "type": "symbol",
+      "source": "openmaptiles",
+      "source-layer": "place",
+      "filter": ["in", "class", "city", "town", "village", "suburb", "neighbourhood"],
+      "layout": {
+        "text-field": "{name}",
+        "text-font": ["Noto Sans Regular"],
+        "text-size": ["interpolate", ["linear"], ["zoom"], 8, 12, 14, 18],
+        "text-transform": "uppercase",
+        "text-letter-spacing": 0.1,
+        "visibility": "none"
+      },
+      "paint": {
+        "text-color": "#9f1239",
+        "text-halo-color": "#fff1f2",
+        "text-halo-width": 2
+      }
+    },
+    {
+      "id": "road-labels",
+      "type": "symbol",
+      "source": "openmaptiles",
+      "source-layer": "transportation_name",
+      "layout": {
+        "text-field": "{name}",
+        "text-font": ["Noto Sans Regular"],
+        "text-size": 10,
+        "symbol-placement": "line",
+        "visibility": "none"
+      },
+      "paint": {
+        "text-color": "#be123c",
+        "text-halo-color": "#fff1f2",
+        "text-halo-width": 1
+      }
+    }
+  ]
+}
