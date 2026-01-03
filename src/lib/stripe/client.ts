@@ -1,12 +1,15 @@
 import { loadStripe, Stripe } from "@stripe/stripe-js";
 
-let stripePromise: Promise<Stripe | null>;
+let stripePromise: Promise<Stripe | null> | null = null;
 
 export const getStripe = () => {
+  const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+  if (!key) {
+    console.error("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not set");
+    return Promise.resolve(null);
+  }
   if (!stripePromise) {
-    stripePromise = loadStripe(
-      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
-    );
+    stripePromise = loadStripe(key);
   }
   return stripePromise;
 };
@@ -24,16 +27,12 @@ export async function createCheckoutSession(priceId: string) {
     throw new Error("Failed to create checkout session");
   }
 
-  const { sessionId } = await response.json();
-  const stripe = await getStripe();
+  const { url } = await response.json();
 
-  if (!stripe) {
-    throw new Error("Stripe failed to load");
+  if (!url) {
+    throw new Error("No checkout URL returned");
   }
 
-  const { error } = await (stripe as unknown as { redirectToCheckout: (opts: { sessionId: string }) => Promise<{ error?: Error }> }).redirectToCheckout({ sessionId });
-
-  if (error) {
-    throw error;
-  }
+  // Redirect to Stripe Checkout
+  window.location.href = url;
 }

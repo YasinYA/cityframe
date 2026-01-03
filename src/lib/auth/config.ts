@@ -1,6 +1,17 @@
 import { Resend } from "resend";
 
-export const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy-load Resend to avoid errors when API key is not set
+let resendClient: Resend | null = null;
+
+export function getResend(): Resend {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY is not configured. Please add it to your .env file.");
+  }
+  if (!resendClient) {
+    resendClient = new Resend(process.env.RESEND_API_KEY);
+  }
+  return resendClient;
+}
 
 // OTP settings
 export const OTP_LENGTH = 6;
@@ -12,22 +23,43 @@ export function generateOTP(): string {
 }
 
 // Simple in-memory store for OTPs (in production, use Redis or database)
-const otpStore = new Map<string, { otp: string; expires: number }>();
+// Use global to persist across Next.js hot reloads in development
+const globalForOtp = globalThis as unknown as {
+  otpStore: Map<string, { otp: string; expires: number }> | undefined;
+};
+
+const otpStore = globalForOtp.otpStore ?? new Map<string, { otp: string; expires: number }>();
+
+if (process.env.NODE_ENV !== "production") {
+  globalForOtp.otpStore = otpStore;
+}
 
 export function storeOTP(email: string, otp: string): void {
   const expires = Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000;
   otpStore.set(email.toLowerCase(), { otp, expires });
+  console.log("Stored OTP for", email.toLowerCase(), ":", otp);
 }
 
 export function verifyOTP(email: string, otp: string): boolean {
+  console.log("Verifying OTP for", email.toLowerCase(), "input:", otp);
+  console.log("Stored OTPs:", Array.from(otpStore.entries()));
+
   const stored = otpStore.get(email.toLowerCase());
-  if (!stored) return false;
+  if (!stored) {
+    console.log("No OTP found for this email");
+    return false;
+  }
   if (Date.now() > stored.expires) {
+    console.log("OTP expired");
     otpStore.delete(email.toLowerCase());
     return false;
   }
-  if (stored.otp !== otp) return false;
+  if (stored.otp !== otp) {
+    console.log("OTP mismatch - expected:", stored.otp, "got:", otp);
+    return false;
+  }
   otpStore.delete(email.toLowerCase());
+  console.log("OTP verified successfully");
   return true;
 }
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { resend, generateOTP, storeOTP } from "@/lib/auth/config";
+import { getResend, generateOTP, storeOTP } from "@/lib/auth/config";
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +16,10 @@ export async function POST(request: NextRequest) {
     storeOTP(email, otp);
 
     // Send email with OTP
-    const { error } = await resend.emails.send({
+    const resend = getResend();
+    console.log("Sending OTP to:", email);
+    console.log("From:", process.env.RESEND_FROM_EMAIL);
+    const { data, error } = await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL || "CityFrame <noreply@cityframe.app>",
       to: email,
       subject: "Your CityFrame verification code",
@@ -38,14 +41,17 @@ export async function POST(request: NextRequest) {
       `,
     });
 
+    console.log("Resend response - data:", data, "error:", error);
+
     if (error) {
       console.error("Failed to send email:", error);
       return NextResponse.json(
-        { error: "Failed to send verification email" },
+        { error: "Failed to send verification email: " + error.message },
         { status: 500 }
       );
     }
 
+    console.log("OTP sent successfully, code:", otp);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Send OTP error:", error);

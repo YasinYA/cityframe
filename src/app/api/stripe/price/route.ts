@@ -1,16 +1,20 @@
 import { NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe/config";
 
 export async function GET() {
-  try {
-    const priceId = process.env.STRIPE_PRO_PRICE_ID;
+  // Return fallback if Stripe is not configured
+  if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_PRO_PRICE_ID) {
+    return NextResponse.json({
+      id: "fallback",
+      amount: 9.99,
+      currency: "usd",
+      name: "Pro",
+      description: "Lifetime access to all features",
+    });
+  }
 
-    if (!priceId) {
-      return NextResponse.json(
-        { error: "Price ID not configured" },
-        { status: 500 }
-      );
-    }
+  try {
+    const { stripe } = await import("@/lib/stripe/config");
+    const priceId = process.env.STRIPE_PRO_PRICE_ID;
 
     const price = await stripe.prices.retrieve(priceId, {
       expand: ["product"],
@@ -27,9 +31,13 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Error fetching price:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch price" },
-      { status: 500 }
-    );
+    // Return fallback on error
+    return NextResponse.json({
+      id: "fallback",
+      amount: 9.99,
+      currency: "usd",
+      name: "Pro",
+      description: "Lifetime access to all features",
+    });
   }
 }

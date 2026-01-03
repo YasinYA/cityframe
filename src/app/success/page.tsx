@@ -1,25 +1,62 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Check, Map, Sparkles, ArrowRight } from "lucide-react";
+import { Check, Map, Sparkles, ArrowRight, Loader2 } from "lucide-react";
 import confetti from "canvas-confetti";
 
 export default function SuccessPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
+  const [verified, setVerified] = useState(false);
+  const [verifying, setVerifying] = useState(true);
 
   useEffect(() => {
-    // Celebrate with confetti
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
-  }, []);
+    async function verifyPayment() {
+      if (!sessionId) {
+        setVerifying(false);
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/stripe/verify-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId }),
+        });
+
+        if (res.ok) {
+          setVerified(true);
+          // Celebrate with confetti
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+          });
+        }
+      } catch (error) {
+        console.error("Verification error:", error);
+      } finally {
+        setVerifying(false);
+      }
+    }
+
+    verifyPayment();
+  }, [sessionId]);
+
+  if (verifying) {
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="max-w-md w-full p-8 text-center">
+          <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-primary" />
+          <h1 className="text-xl font-bold">Verifying your payment...</h1>
+        </Card>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-background flex items-center justify-center p-4">

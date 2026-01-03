@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe/config";
 import { cookies } from "next/headers";
+import { SESSION_COOKIE_NAME } from "@/lib/auth/config";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,17 +13,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get or create a customer ID from cookies
+    const { stripe } = await import("@/lib/stripe/config");
+
+    // Get user email and customer ID from cookies
     const cookieStore = await cookies();
+    const userEmail = cookieStore.get(SESSION_COOKIE_NAME)?.value;
     let customerId = cookieStore.get("stripe_customer_id")?.value;
 
     if (!customerId) {
       const customer = await stripe.customers.create({
+        email: userEmail || undefined,
         metadata: {
-          anonymous: "true",
+          anonymous: userEmail ? "false" : "true",
         },
       });
       customerId = customer.id;
+    } else if (userEmail) {
+      // Update existing customer with email if they signed in
+      await stripe.customers.update(customerId, {
+        email: userEmail,
+        metadata: { anonymous: "false" },
+      });
     }
 
     // Create one-time payment checkout session
@@ -44,7 +54,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const response = NextResponse.json({ sessionId: session.id });
+    const response = NextResponse.json({ sessionId: session.id, url: session.url });
     response.cookies.set("stripe_customer_id", customerId, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

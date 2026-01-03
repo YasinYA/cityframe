@@ -9,6 +9,7 @@ import { createCheckoutSession } from "@/lib/stripe/client";
 import { PriceData } from "@/lib/stripe/config";
 import { SignInModal } from "@/components/auth/SignInModal";
 import { Check, Sparkles, Zap, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import Link from "next/link";
 
 export function PricingCards() {
@@ -47,11 +48,29 @@ export function PricingCards() {
 
     if (!price?.id) return;
 
+    // Check if Stripe is configured (fallback means not configured)
+    if (price.id === "fallback") {
+      toast.error("Payments not configured", {
+        description: "Stripe is not set up yet. Please add STRIPE_SECRET_KEY to .env",
+      });
+      return;
+    }
+
     try {
       setIsCheckingOut(true);
       await createCheckoutSession(price.id);
     } catch (error) {
       console.error("Checkout error:", error);
+      const message = error instanceof Error ? error.message : "Please try again later.";
+      if (message.includes("Stripe failed to load")) {
+        toast.error("Payments not configured", {
+          description: "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is missing in .env",
+        });
+      } else {
+        toast.error("Checkout failed", {
+          description: message,
+        });
+      }
     } finally {
       setIsCheckingOut(false);
     }

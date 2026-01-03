@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { SESSION_COOKIE_NAME } from "@/lib/auth/config";
-import { stripe } from "@/lib/stripe/config";
 
 export type SessionResponse = {
   authenticated: boolean;
@@ -26,14 +25,16 @@ export async function GET(request: NextRequest) {
 
     let isPro = false;
 
-    if (customerId) {
+    // Only check Stripe if configured and customer ID exists
+    if (customerId && process.env.STRIPE_SECRET_KEY) {
       try {
+        const { stripe } = await import("@/lib/stripe/config");
         const customer = await stripe.customers.retrieve(customerId);
         if (!customer.deleted) {
           isPro = customer.metadata?.pro === "true";
         }
       } catch {
-        // Customer not found, that's ok
+        // Customer not found or Stripe error, that's ok
       }
     }
 

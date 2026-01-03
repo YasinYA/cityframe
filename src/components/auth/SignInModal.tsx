@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import { Mail, ArrowRight, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface SignInModalProps {
   open: boolean;
@@ -48,6 +49,9 @@ export function SignInModal({ open, onOpenChange }: SignInModalProps) {
 
     try {
       await verifyOTP(email, otp);
+      toast.success("Welcome back!", {
+        description: "You've been signed in successfully.",
+      });
       onOpenChange(false);
       // Reset state
       setStep("email");
