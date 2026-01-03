@@ -456,6 +456,11 @@ export default function LandingPage() {
             />
             <span className="text-sm font-medium">CityFrame</span>
           </div>
+          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <Link href="/terms" className="hover:text-foreground transition-colors">Terms</Link>
+            <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
+            <Link href="/refund" className="hover:text-foreground transition-colors">Refunds</Link>
+          </div>
           <p className="text-xs text-muted-foreground">
             &copy; {new Date().getFullYear()} CityFrame
           </p>
