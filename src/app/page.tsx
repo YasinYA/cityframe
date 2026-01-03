@@ -31,7 +31,21 @@ const stagger = {
   },
 };
 
-const deviceCategories = [
+interface DeviceConfig {
+  id: string;
+  label: string;
+  styleIndex: number;
+  aspect: string;
+  width: string;
+  isMonitor?: boolean;
+}
+
+const deviceCategories: Array<{
+  id: string;
+  label: string;
+  icon: typeof Smartphone;
+  devices: DeviceConfig[];
+}> = [
   {
     id: "phones",
     label: "Phones",

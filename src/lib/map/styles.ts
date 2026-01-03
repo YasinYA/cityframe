@@ -15,6 +15,12 @@ export interface StyleConfig {
     roadColor: string;
     roadWidth: number;
     labels: boolean;
+    contours?: boolean;
+    contourColor?: string;
+    contourWidth?: number;
+    glow?: boolean;
+    glowColor?: string;
+    glowIntensity?: number;
   };
 }
 
@@ -347,4 +353,30 @@ export function getDevicePreset(device: DeviceType): DevicePreset {
 export function isProStyle(id: string): boolean {
   const config = getStyleConfig(id);
   return config?.premium ?? false;
+}
+
+export interface StyleTransform {
+  grayscale?: boolean;
+  brightness?: number;
+  saturation?: number;
+  hue?: number;
+  tint?: { r: number; g: number; b: number };
+  contrast?: number;
+}
+
+export function getStyleTransform(styleId: string): StyleTransform {
+  // Map styles are pre-styled via JSON, so we return minimal transforms
+  // Additional transforms can be added per-style if needed
+  const config = getStyleConfig(styleId);
+  if (!config) return {};
+
+  // Apply subtle enhancements based on style category
+  switch (config.category) {
+    case "dark":
+      return { contrast: 1.1 };
+    case "colorful":
+      return { saturation: 1.1 };
+    default:
+      return {};
+  }
 }

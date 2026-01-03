@@ -45,7 +45,7 @@ async function upscaleImage(imageBuffer: Buffer, scale: number = 4): Promise<Buf
   }
 
   const arrayBuffer = await response.arrayBuffer();
-  return Buffer.from(arrayBuffer);
+  return Buffer.from(new Uint8Array(arrayBuffer));
 }
 
 export async function POST(request: NextRequest) {
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     // Extract base64 data from data URL
     const base64Data = image.replace(/^data:image\/\w+;base64,/, "");
-    let imageBuffer = Buffer.from(base64Data, "base64");
+    let imageBuffer: Buffer = Buffer.from(base64Data, "base64");
 
     // Get source image dimensions
     const metadata = await sharp(imageBuffer).metadata();

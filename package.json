@@ -8,10 +8,12 @@
     "start": "next start",
     "lint": "next lint",
     "worker": "tsx worker/index.ts",
+    "worker:prod": "node --import tsx worker/index.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "postinstall": "npm run db:generate || true"
   },
   "repository": {
     "type": "git",

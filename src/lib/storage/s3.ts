@@ -8,7 +8,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const s3Client = new S3Client({
   endpoint: process.env.S3_ENDPOINT,
-  region: "us-east-1", // Required but ignored for MinIO
+  region: process.env.S3_REGION || "us-east-1",
   credentials: {
     accessKeyId: process.env.S3_ACCESS_KEY!,
     secretAccessKey: process.env.S3_SECRET_KEY!,
@@ -17,6 +17,9 @@ const s3Client = new S3Client({
 });
 
 const BUCKET = process.env.S3_BUCKET || "cityframe-wallpapers";
+
+// Public URL may differ from internal endpoint (e.g., CDN or external MinIO URL)
+const PUBLIC_URL = process.env.S3_PUBLIC_URL || process.env.S3_ENDPOINT || "http://localhost:9000";
 
 export async function uploadImage(
   key: string,
@@ -33,8 +36,7 @@ export async function uploadImage(
   );
 
   // Return the public URL
-  const endpoint = process.env.S3_ENDPOINT || "http://localhost:9000";
-  return `${endpoint}/${BUCKET}/${key}`;
+  return `${PUBLIC_URL}/${BUCKET}/${key}`;
 }
 
 export async function getSignedDownloadUrl(

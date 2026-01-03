@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Check, Map, Sparkles, ArrowRight, Loader2 } from "lucide-react";
 import confetti from "canvas-confetti";
 
-export default function SuccessPage() {
+function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const [verified, setVerified] = useState(false);
@@ -112,5 +112,24 @@ export default function SuccessPage() {
         </Link>
       </Card>
     </main>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <main className="min-h-screen bg-background flex items-center justify-center p-4">
+      <Card className="max-w-md w-full p-8 text-center">
+        <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-primary" />
+        <h1 className="text-xl font-bold">Loading...</h1>
+      </Card>
+    </main>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <SuccessContent />
+    </Suspense>
   );
 }
