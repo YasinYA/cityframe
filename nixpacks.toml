@@ -3,7 +3,8 @@ nixPkgs = [
   "nodejs_20",
   "chromium",
   "fontconfig",
-  "freefont_ttf"
+  "freefont_ttf",
+  "bash"
 ]
 
 [phases.install]
