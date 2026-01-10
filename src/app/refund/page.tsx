@@ -40,69 +40,45 @@ export default function RefundPage() {
 
           <div className="prose prose-neutral dark:prose-invert max-w-none space-y-6">
             <section>
-              <h2 className="text-xl font-semibold mb-3">Our Commitment</h2>
+              <h2 className="text-xl font-semibold mb-3">14-Day Money-Back Guarantee</h2>
               <p className="text-muted-foreground">
-                We want you to be completely satisfied with your CityFrame purchase.
-                If you&apos;re not happy with the Pro features, we offer a straightforward
-                refund policy.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold mb-3">7-Day Money-Back Guarantee</h2>
-              <p className="text-muted-foreground">
-                If you&apos;re not satisfied with your Pro purchase for any reason, you can
-                request a full refund within 7 days of your purchase date. No questions asked.
+                City Frame offers a 14-day money-back guarantee on all CityFrame Pro purchases.
+                If you are not satisfied with your purchase for any reason, you can request a
+                full refund within 14 days of your purchase date.
               </p>
             </section>
 
             <section>
               <h2 className="text-xl font-semibold mb-3">How to Request a Refund</h2>
-              <p className="text-muted-foreground mb-2">To request a refund:</p>
-              <ol className="list-decimal list-inside text-muted-foreground space-y-1">
-                <li>Email us at support@cityframe.app</li>
-                <li>Include the email address associated with your purchase</li>
-                <li>Briefly let us know why you&apos;re requesting a refund (optional, but helps us improve)</li>
-              </ol>
-              <p className="text-muted-foreground mt-2">
-                We&apos;ll process your refund within 5-10 business days. The refund will be
-                credited to your original payment method.
+              <p className="text-muted-foreground">
+                To request a refund, please email info@cityframe.app with the email address
+                associated with your purchase. Refunds are typically processed within 5-10
+                business days and will be credited to your original payment method.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold mb-3">After the Refund</h2>
+              <h2 className="text-xl font-semibold mb-3">After Your Refund</h2>
               <p className="text-muted-foreground">
-                Once your refund is processed, your account will be downgraded to the free tier.
-                You&apos;ll still have access to free features and any wallpapers you&apos;ve already
+                Once your refund is processed, your account will be returned to the free tier.
+                You will retain access to free features and any wallpapers you have already
                 downloaded.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold mb-3">Exceptions</h2>
-              <p className="text-muted-foreground mb-2">Refunds may not be available if:</p>
-              <ul className="list-disc list-inside text-muted-foreground space-y-1">
-                <li>More than 7 days have passed since your purchase</li>
-                <li>You&apos;ve previously received a refund for CityFrame</li>
-                <li>There&apos;s evidence of abuse or fraudulent activity</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold mb-3">Chargebacks</h2>
+              <h2 className="text-xl font-semibold mb-3">Payment Processing</h2>
               <p className="text-muted-foreground">
-                We encourage you to contact us directly for refunds rather than initiating
-                a chargeback with your bank. Chargebacks incur fees and may result in your
-                account being suspended.
+                Our order process is conducted by our online reseller Paddle.com. Paddle.com
+                is the Merchant of Record for all our orders and handles all refund processing.
               </p>
             </section>
 
             <section>
               <h2 className="text-xl font-semibold mb-3">Contact Us</h2>
               <p className="text-muted-foreground">
-                Have questions about our refund policy? Reach out to us at support@cityframe.app
-                and we&apos;ll be happy to help.
+                If you have any questions about our refund policy, please contact City Frame
+                at info@cityframe.app
               </p>
             </section>
           </div>

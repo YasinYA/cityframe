@@ -467,7 +467,7 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      <SignInModal open={signInOpen} onOpenChange={setSignInOpen} />
+      <SignInModal open={signInOpen} onOpenChange={setSignInOpen} redirectTo="/pricing" />
     </main>
   );
 }

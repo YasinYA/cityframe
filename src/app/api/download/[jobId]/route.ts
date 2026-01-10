@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { eq, and } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { jobs, images } from "@/lib/db/schema";
-import { getSignedDownloadUrl } from "@/lib/storage/s3";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(
   request: NextRequest,
@@ -11,6 +12,7 @@ export async function GET(
   try {
     const { jobId } = await params;
     const device = request.nextUrl.searchParams.get("device");
+    const download = request.nextUrl.searchParams.get("download") === "true";
 
     // Get job from database
     const job = await db.query.jobs.findFirst({
@@ -45,15 +47,27 @@ export async function GET(
       );
     }
 
-    // Generate signed URLs for each image
-    const downloads = await Promise.all(
-      imgs.map(async (img) => ({
-        device: img.device,
-        width: img.width,
-        height: img.height,
-        url: await getSignedDownloadUrl(img.storageKey, 3600), // 1 hour expiry
-      }))
-    );
+    // If download=true and single device specified, return the image directly
+    if (download && device && imgs.length === 1) {
+      const img = imgs[0];
+      const buffer = Buffer.from(img.imageData, "base64");
+
+      return new NextResponse(buffer, {
+        headers: {
+          "Content-Type": "image/png",
+          "Content-Disposition": `attachment; filename="wallpaper-${device}-${img.width}x${img.height}.png"`,
+          "Content-Length": buffer.length.toString(),
+        },
+      });
+    }
+
+    // Return download info with data URLs
+    const downloads = imgs.map((img) => ({
+      device: img.device,
+      width: img.width,
+      height: img.height,
+      dataUrl: `data:image/png;base64,${img.imageData}`,
+    }));
 
     return NextResponse.json({
       jobId,
@@ -62,7 +76,7 @@ export async function GET(
   } catch (error) {
     console.error("Download error:", error);
     return NextResponse.json(
-      { error: "Failed to generate download links" },
+      { error: "Failed to get downloads" },
       { status: 500 }
     );
   }

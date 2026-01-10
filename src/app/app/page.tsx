@@ -64,7 +64,7 @@ export default function AppPage() {
 					</Card>
 				</div>
 
-				<SignInModal open={signInOpen} onOpenChange={setSignInOpen} />
+				<SignInModal open={signInOpen} onOpenChange={setSignInOpen} redirectTo="/app" />
 			</main>
 		)
 	}

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { analytics } from "@/lib/analytics/mixpanel";
 import { Check, Map, Sparkles, ArrowRight, Loader2 } from "lucide-react";
 import confetti from "canvas-confetti";
 
@@ -28,6 +29,12 @@ function SuccessContent() {
 
           if (res.ok) {
             setVerified(true);
+            // Track purchase completed
+            analytics.purchaseCompleted({
+              priceId: "pro",
+              amount: 0, // We don't have exact amount here
+              currency: "usd",
+            });
             // Celebrate with confetti
             confetti({
               particleCount: 100,

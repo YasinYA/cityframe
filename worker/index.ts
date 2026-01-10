@@ -10,7 +10,6 @@ import {
   generateWallpapers,
   closeBrowser,
 } from "../src/lib/generation/pipeline";
-import { uploadImage, generateStorageKey, getSignedDownloadUrl } from "../src/lib/storage/s3";
 import { enhanceImage, isAIAvailable } from "../src/lib/ai/enhance";
 
 console.log("Starting wallpaper generation worker...");
@@ -43,15 +42,13 @@ const worker = createGenerationWorker(async (job: Job<GenerationJobData>) => {
       if (ai?.enabled && isAIAvailable()) {
         console.log(`Applying AI enhancement to ${wallpaper.device}...`);
 
-        // First, upload the base image to get a URL for the AI service
-        const tempKey = `temp/${jobId}/${wallpaper.device}-base.png`;
-        await uploadImage(tempKey, wallpaper.buffer);
-        const tempUrl = await getSignedDownloadUrl(tempKey);
+        // Use data URL for AI service (no S3 needed)
+        const dataUrl = `data:image/png;base64,${wallpaper.buffer.toString("base64")}`;
 
         // Run AI enhancement
         const enhancementResult = await enhanceImage({
           style,
-          imageUrl: tempUrl,
+          imageUrl: dataUrl,
           upscale: ai.upscale,
           upscaleFactor: ai.upscaleFactor,
           enhanceStyle: ai.enhanceStyle,
@@ -78,20 +75,19 @@ const worker = createGenerationWorker(async (job: Job<GenerationJobData>) => {
         }
       }
 
-      // Upload final wallpaper
-      const storageKey = generateStorageKey(jobId, wallpaper.device, style);
-      await uploadImage(storageKey, finalBuffer);
+      // Store image as base64 in database
+      const imageData = finalBuffer.toString("base64");
 
       await db.insert(images).values({
         jobId,
         device: wallpaper.device,
-        storageKey,
+        imageData,
         width: finalWidth,
         height: finalHeight,
       });
 
       console.log(
-        `Uploaded ${wallpaper.device}: ${finalWidth}x${finalHeight}${ai?.enabled ? " (AI enhanced)" : ""}`
+        `Saved ${wallpaper.device}: ${finalWidth}x${finalHeight}${ai?.enabled ? " (AI enhanced)" : ""}`
       );
     }
 

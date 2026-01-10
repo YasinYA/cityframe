@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -11,15 +12,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
+import { analytics, identifyUser } from "@/lib/analytics/mixpanel";
 import { Mail, ArrowRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface SignInModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  redirectTo?: string;
 }
 
-export function SignInModal({ open, onOpenChange }: SignInModalProps) {
+export function SignInModal({ open, onOpenChange, redirectTo }: SignInModalProps) {
+  const router = useRouter();
   const { sendOTP, verifyOTP } = useAuth();
   const [step, setStep] = useState<"email" | "otp">("email");
   const [email, setEmail] = useState("");
@@ -31,6 +35,7 @@ export function SignInModal({ open, onOpenChange }: SignInModalProps) {
     e.preventDefault();
     setError("");
     setIsLoading(true);
+    analytics.signUpStarted();
 
     try {
       await sendOTP(email);
@@ -48,7 +53,11 @@ export function SignInModal({ open, onOpenChange }: SignInModalProps) {
     setIsLoading(true);
 
     try {
-      await verifyOTP(email, otp);
+      const user = await verifyOTP(email, otp);
+      // Track sign in and identify user
+      analytics.signInCompleted(email);
+      identifyUser(user.id, email);
+
       toast.success("Welcome back!", {
         description: "You've been signed in successfully.",
       });
@@ -57,6 +66,10 @@ export function SignInModal({ open, onOpenChange }: SignInModalProps) {
       setStep("email");
       setEmail("");
       setOtp("");
+      // Redirect if specified
+      if (redirectTo) {
+        router.push(redirectTo);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Verification failed");
     } finally {

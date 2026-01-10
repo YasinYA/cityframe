@@ -40,19 +40,20 @@ export default function TermsPage() {
 
           <div className="prose prose-neutral dark:prose-invert max-w-none space-y-6">
             <section>
-              <h2 className="text-xl font-semibold mb-3">1. Acceptance of Terms</h2>
+              <h2 className="text-xl font-semibold mb-3">1. About City Frame</h2>
               <p className="text-muted-foreground">
-                By accessing or using CityFrame, you agree to be bound by these Terms of Service.
-                If you do not agree to these terms, please do not use our service.
+                These Terms of Service (&quot;Terms&quot;) govern your use of CityFrame, a service operated
+                by City Frame. By accessing or using CityFrame at cityframe.app, you agree to be bound
+                by these Terms. If you do not agree to these Terms, please do not use our service.
               </p>
             </section>
 
             <section>
               <h2 className="text-xl font-semibold mb-3">2. Description of Service</h2>
               <p className="text-muted-foreground">
-                CityFrame is a web-based application that allows users to generate custom city map
-                wallpapers for various devices. We offer both free and paid tiers with different
-                feature sets.
+                City Frame operates CityFrame, a web-based application that allows users to generate
+                custom city map wallpapers for various devices. We offer both free and paid tiers
+                with different feature sets.
               </p>
             </section>
 
@@ -82,40 +83,50 @@ export default function TermsPage() {
               <p className="text-muted-foreground">
                 Wallpapers generated through CityFrame are for personal use. The underlying map data
                 is sourced from third-party providers and subject to their respective licenses.
-                CityFrame retains rights to the application, design, and custom style configurations.
+                City Frame retains rights to the application, design, and custom style configurations.
               </p>
             </section>
 
             <section>
               <h2 className="text-xl font-semibold mb-3">6. Payment and Billing</h2>
               <p className="text-muted-foreground">
-                Pro access is available as a one-time purchase. All payments are processed securely
-                through Stripe. Prices are subject to change, but any changes will not affect
-                existing purchases.
+                Pro access is available as a one-time purchase. Our order process is conducted by our
+                online reseller Paddle.com. Paddle.com is the Merchant of Record for all our orders.
+                Paddle provides all customer service inquiries and handles returns. Prices are subject
+                to change, but any changes will not affect existing purchases.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold mb-3">7. Limitation of Liability</h2>
+              <h2 className="text-xl font-semibold mb-3">7. Refunds</h2>
               <p className="text-muted-foreground">
-                CityFrame is provided &quot;as is&quot; without warranties of any kind. We are not liable
-                for any indirect, incidental, or consequential damages arising from your use of
-                the service.
+                We offer a 14-day money-back guarantee on all Pro purchases. If you are not satisfied
+                for any reason, you may request a full refund within 14 days of purchase. Please see
+                our <Link href="/refund" className="underline">Refund Policy</Link> for details.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold mb-3">8. Changes to Terms</h2>
+              <h2 className="text-xl font-semibold mb-3">8. Limitation of Liability</h2>
               <p className="text-muted-foreground">
-                We may update these terms from time to time. Continued use of the service after
-                changes constitutes acceptance of the new terms.
+                CityFrame is provided by City Frame &quot;as is&quot; without warranties of any kind.
+                City Frame is not liable for any indirect, incidental, or consequential damages
+                arising from your use of the service.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold mb-3">9. Contact</h2>
+              <h2 className="text-xl font-semibold mb-3">9. Changes to Terms</h2>
               <p className="text-muted-foreground">
-                For questions about these terms, please contact us at support@cityframe.app
+                City Frame may update these Terms from time to time. Continued use of the service
+                after changes constitutes acceptance of the new Terms.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold mb-3">10. Contact</h2>
+              <p className="text-muted-foreground">
+                For questions about these Terms, please contact City Frame at info@cityframe.app
               </p>
             </section>
           </div>
