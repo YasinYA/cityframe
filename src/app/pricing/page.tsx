@@ -6,7 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 
 export const metadata: Metadata = {
-  title: "Pricing - CityFrame",
+  title: "Pricing - City Frame",
   description: "Get lifetime access to all styles, devices, and AI-upscaled 4K wallpapers.",
 };
 
@@ -25,11 +25,11 @@ export default function PricingPage() {
             <Link href="/" className="flex items-center gap-2">
               <Image
                 src="/logo.webp"
-                alt="CityFrame"
+                alt="City Frame"
                 width={32}
                 height={32}
               />
-              <span className="font-semibold">CityFrame</span>
+              <span className="font-semibold">City Frame</span>
             </Link>
           </div>
         </div>

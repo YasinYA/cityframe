@@ -66,7 +66,7 @@ export function CityPageClient({ city, styles }: CityPageClientProps) {
             </Link>
             <Image
               src="/logo.webp"
-              alt="CityFrame"
+              alt="City Frame"
               width={48}
               height={48}
               className="rounded-lg"
@@ -219,7 +219,7 @@ export function CityPageClient({ city, styles }: CityPageClientProps) {
               Create beautiful, high-resolution wallpapers featuring the unique
               street layout and geography of {city.name}, {city.country}.
               Whether you&apos;re a local resident or just love the city,
-              CityFrame lets you generate custom wallpapers that showcase{" "}
+              City Frame lets you generate custom wallpapers that showcase{" "}
               {city.name}&apos;s distinctive character.
             </p>
             <h3>Available Styles</h3>

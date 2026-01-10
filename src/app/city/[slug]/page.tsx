@@ -22,11 +22,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!city) {
     return {
-      title: "City Not Found | CityFrame",
+      title: "City Not Found | City Frame",
     };
   }
 
-  const title = `${city.name} Wallpapers | CityFrame`;
+  const title = `${city.name} Wallpapers | City Frame`;
   const description = `Create stunning ${city.name}, ${city.country} wallpapers for your phone, tablet, and desktop. ${city.description}. Download high-resolution map wallpapers instantly.`;
   const url = `https://cityframe.app/city/${city.slug}`;
 
@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title,
       description,
       url,
-      siteName: "CityFrame",
+      siteName: "City Frame",
       type: "website",
       images: [
         {
@@ -93,7 +93,7 @@ function generateJsonLd(city: NonNullable<ReturnType<typeof getCityBySlug>>) {
     },
     publisher: {
       "@type": "Organization",
-      name: "CityFrame",
+      name: "City Frame",
       url: "https://cityframe.app",
     },
   };

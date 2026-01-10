@@ -185,7 +185,7 @@ This is **impossible for mobile-only competitors**.
 - Faster queue
 
 No app store tax.
-Stripe only.
+Paddle only.
 
 ---
 

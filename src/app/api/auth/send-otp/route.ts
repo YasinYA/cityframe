@@ -19,14 +19,14 @@ export async function POST(request: NextRequest) {
     const resend = getResend();
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://cityframe.app";
     const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || "CityFrame <info@cityframe.app>",
+      from: process.env.RESEND_FROM_EMAIL || "City Frame <info@cityframe.app>",
       to: email,
-      subject: "Your CityFrame verification code",
+      subject: "Your City Frame verification code",
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 480px; margin: 0 auto; padding: 40px 20px; background: #ffffff;">
           <!-- Logo -->
           <div style="text-align: center; margin-bottom: 32px;">
-            <img src="${appUrl}/logo.webp" alt="CityFrame" style="height: 48px; width: auto;" />
+            <img src="${appUrl}/logo.webp" alt="City Frame" style="height: 48px; width: auto;" />
           </div>
 
           <!-- Content -->
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
             Verify your email
           </h2>
           <p style="color: #666666; margin: 0 0 24px 0; font-size: 16px; line-height: 1.5; text-align: center;">
-            Enter this code to sign in to CityFrame:
+            Enter this code to sign in to City Frame:
           </p>
 
           <!-- OTP Code -->
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
           <!-- Footer -->
           <div style="text-align: center;">
             <p style="color: #999999; font-size: 13px; margin: 0 0 8px 0;">
-              CityFrame - Premium City Wallpapers
+              City Frame - Premium City Wallpapers
             </p>
             <p style="color: #999999; font-size: 13px; margin: 0;">
               Questions? Contact us at <a href="mailto:info@cityframe.app" style="color: #666666;">info@cityframe.app</a>

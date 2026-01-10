@@ -9,8 +9,8 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   metadataBase: new URL("https://cityframe.app"),
   title: {
-    default: "CityFrame - City Wallpaper Generator",
-    template: "%s | CityFrame",
+    default: "City Frame - City Wallpaper Generator",
+    template: "%s | City Frame",
   },
   description:
     "Create stunning, device-perfect wallpapers from any city in the world. Premium map styles, instant download. Better than Cartogram.",
@@ -23,21 +23,21 @@ export const metadata: Metadata = {
     "custom wallpaper",
     "cartogram alternative",
   ],
-  authors: [{ name: "CityFrame" }],
-  creator: "CityFrame",
-  publisher: "CityFrame",
+  authors: [{ name: "City Frame" }],
+  creator: "City Frame",
+  publisher: "City Frame",
   openGraph: {
-    title: "CityFrame - City Wallpaper Generator",
+    title: "City Frame - City Wallpaper Generator",
     description:
       "Create stunning, device-perfect wallpapers from any city in the world.",
     url: "https://cityframe.app",
-    siteName: "CityFrame",
+    siteName: "City Frame",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "CityFrame - City Wallpaper Generator",
+    title: "City Frame - City Wallpaper Generator",
     description:
       "Create stunning, device-perfect wallpapers from any city in the world.",
     creator: "@cityframe",

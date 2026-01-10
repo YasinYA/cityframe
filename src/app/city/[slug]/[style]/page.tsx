@@ -32,11 +32,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!city || !style) {
     return {
-      title: "Not Found | CityFrame",
+      title: "Not Found | City Frame",
     };
   }
 
-  const title = `${city.name} ${style.name} Wallpaper | CityFrame`;
+  const title = `${city.name} ${style.name} Wallpaper | City Frame`;
   const description = `Download a stunning ${style.name} style wallpaper of ${city.name}, ${city.country}. ${style.description}. Perfect for phone, tablet, and desktop.`;
   const url = `https://cityframe.app/city/${city.slug}/${style.id}`;
 
@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title,
       description,
       url,
-      siteName: "CityFrame",
+      siteName: "City Frame",
       type: "website",
       images: [
         {
@@ -92,7 +92,7 @@ function generateJsonLd(
     thumbnailUrl: `https://cityframe.app/api/og?city=${city.slug}&style=${style.id}`,
     creator: {
       "@type": "Organization",
-      name: "CityFrame",
+      name: "City Frame",
       url: "https://cityframe.app",
     },
     contentLocation: {

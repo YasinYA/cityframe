@@ -38,8 +38,8 @@ export default function AppPage() {
 				<header className='shrink-0 z-50 border-b bg-background/95 backdrop-blur'>
 					<div className='flex h-14 items-center px-4 max-w-6xl mx-auto'>
 						<Link href="/" className='flex items-center gap-2'>
-							<Image src='/logo.webp' alt='CityFrame' width={32} height={32} />
-							<span className='font-semibold'>CityFrame</span>
+							<Image src='/logo.webp' alt='City Frame' width={32} height={32} />
+							<span className='font-semibold'>City Frame</span>
 						</Link>
 					</div>
 				</header>
@@ -76,8 +76,8 @@ export default function AppPage() {
 				<header className='shrink-0 z-50 border-b bg-background/95 backdrop-blur'>
 					<div className='flex h-14 items-center justify-between px-4 max-w-6xl mx-auto'>
 						<Link href="/" className='flex items-center gap-2'>
-							<Image src='/logo.webp' alt='CityFrame' width={32} height={32} />
-							<span className='font-semibold'>CityFrame</span>
+							<Image src='/logo.webp' alt='City Frame' width={32} height={32} />
+							<span className='font-semibold'>City Frame</span>
 						</Link>
 						<div className='flex items-center gap-3'>
 							<span className='text-sm text-muted-foreground hidden sm:block'>
@@ -123,8 +123,8 @@ export default function AppPage() {
 			<header className='shrink-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
 				<div className='flex h-14 items-center px-4 w-full'>
 					<Link href="/" className='flex items-center gap-2'>
-						<Image src='/logo.webp' alt='CityFrame' width={32} height={32} />
-						<span className='font-semibold hidden sm:block'>CityFrame</span>
+						<Image src='/logo.webp' alt='City Frame' width={32} height={32} />
+						<span className='font-semibold hidden sm:block'>City Frame</span>
 					</Link>
 
 					<nav className='hidden md:flex items-center gap-4 ml-auto'>
@@ -213,7 +213,7 @@ export default function AppPage() {
 						<div className='shrink-0 p-3 border-t bg-card'>
 							<GenerateButton />
 							<p className='text-[9px] text-muted-foreground text-center mt-3'>
-								&copy; {new Date().getFullYear()} CityFrame
+								&copy; {new Date().getFullYear()} City Frame
 							</p>
 						</div>
 					</div>

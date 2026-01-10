@@ -5,8 +5,8 @@ import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 
 export const metadata: Metadata = {
-  title: "Terms of Service - CityFrame",
-  description: "Terms and conditions for using CityFrame wallpaper generator.",
+  title: "Terms of Service - City Frame",
+  description: "Terms and conditions for using City Frame wallpaper generator.",
 };
 
 export default function TermsPage() {
@@ -23,11 +23,11 @@ export default function TermsPage() {
             <Link href="/" className="flex items-center gap-2">
               <Image
                 src="/logo.webp"
-                alt="CityFrame"
+                alt="City Frame"
                 width={32}
                 height={32}
               />
-              <span className="font-semibold">CityFrame</span>
+              <span className="font-semibold">City Frame</span>
             </Link>
           </div>
         </div>
@@ -42,8 +42,8 @@ export default function TermsPage() {
             <section>
               <h2 className="text-xl font-semibold mb-3">1. About City Frame</h2>
               <p className="text-muted-foreground">
-                These Terms of Service (&quot;Terms&quot;) govern your use of CityFrame, a service operated
-                by City Frame. By accessing or using CityFrame at cityframe.app, you agree to be bound
+                These Terms of Service (&quot;Terms&quot;) govern your use of City Frame, a service operated
+                by City Frame. By accessing or using City Frame at cityframe.app, you agree to be bound
                 by these Terms. If you do not agree to these Terms, please do not use our service.
               </p>
             </section>
@@ -51,7 +51,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-xl font-semibold mb-3">2. Description of Service</h2>
               <p className="text-muted-foreground">
-                City Frame operates CityFrame, a web-based application that allows users to generate
+                City Frame operates City Frame, a web-based application that allows users to generate
                 custom city map wallpapers for various devices. We offer both free and paid tiers
                 with different feature sets.
               </p>
@@ -81,7 +81,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-xl font-semibold mb-3">5. Intellectual Property</h2>
               <p className="text-muted-foreground">
-                Wallpapers generated through CityFrame are for personal use. The underlying map data
+                Wallpapers generated through City Frame are for personal use. The underlying map data
                 is sourced from third-party providers and subject to their respective licenses.
                 City Frame retains rights to the application, design, and custom style configurations.
               </p>
@@ -109,7 +109,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-xl font-semibold mb-3">8. Limitation of Liability</h2>
               <p className="text-muted-foreground">
-                CityFrame is provided by City Frame &quot;as is&quot; without warranties of any kind.
+                City Frame is provided by City Frame &quot;as is&quot; without warranties of any kind.
                 City Frame is not liable for any indirect, incidental, or consequential damages
                 arising from your use of the service.
               </p>

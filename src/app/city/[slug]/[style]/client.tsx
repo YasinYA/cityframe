@@ -57,7 +57,7 @@ export function CityStylePageClient({
             </Link>
             <Image
               src="/logo.webp"
-              alt="CityFrame"
+              alt="City Frame"
               width={48}
               height={48}
               className="rounded-lg"

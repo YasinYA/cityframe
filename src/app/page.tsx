@@ -109,11 +109,11 @@ export default function LandingPage() {
           <Link href="/" className="flex items-center gap-2">
             <Image
               src="/logo.webp"
-              alt="CityFrame"
+              alt="City Frame"
               width={32}
               height={32}
             />
-            <span className="font-semibold">CityFrame</span>
+            <span className="font-semibold">City Frame</span>
           </Link>
 
           {!isLoading && (
@@ -450,11 +450,11 @@ export default function LandingPage() {
           <div className="flex items-center gap-2">
             <Image
               src="/logo.webp"
-              alt="CityFrame"
+              alt="City Frame"
               width={24}
               height={24}
             />
-            <span className="text-sm font-medium">CityFrame</span>
+            <span className="text-sm font-medium">City Frame</span>
           </div>
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <Link href="/terms" className="hover:text-foreground transition-colors">Terms</Link>
@@ -462,7 +462,7 @@ export default function LandingPage() {
             <Link href="/refund" className="hover:text-foreground transition-colors">Refunds</Link>
           </div>
           <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} CityFrame
+            &copy; {new Date().getFullYear()} City Frame
           </p>
         </div>
       </footer>

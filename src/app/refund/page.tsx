@@ -5,8 +5,8 @@ import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 
 export const metadata: Metadata = {
-  title: "Refund Policy - CityFrame",
-  description: "Refund and cancellation policy for CityFrame purchases.",
+  title: "Refund Policy - City Frame",
+  description: "Refund and cancellation policy for City Frame purchases.",
 };
 
 export default function RefundPage() {
@@ -23,11 +23,11 @@ export default function RefundPage() {
             <Link href="/" className="flex items-center gap-2">
               <Image
                 src="/logo.webp"
-                alt="CityFrame"
+                alt="City Frame"
                 width={32}
                 height={32}
               />
-              <span className="font-semibold">CityFrame</span>
+              <span className="font-semibold">City Frame</span>
             </Link>
           </div>
         </div>
@@ -42,7 +42,7 @@ export default function RefundPage() {
             <section>
               <h2 className="text-xl font-semibold mb-3">14-Day Money-Back Guarantee</h2>
               <p className="text-muted-foreground">
-                City Frame offers a 14-day money-back guarantee on all CityFrame Pro purchases.
+                City Frame offers a 14-day money-back guarantee on all City Frame Pro purchases.
                 If you are not satisfied with your purchase for any reason, you can request a
                 full refund within 14 days of your purchase date.
               </p>

@@ -51,7 +51,7 @@ export function CitySearch({ onSelect }: CitySearchProps) {
           )}&limit=5&addressdetails=1`,
           {
             headers: {
-              "User-Agent": "CityFrame/1.0 (City Wallpaper Generator)",
+              "User-Agent": "CityFrame/1.0 (cityframe.app)",
             },
           }
         );

@@ -95,7 +95,7 @@ export function SignInModal({ open, onOpenChange, redirectTo }: SignInModalProps
             <Mail className="w-6 h-6 text-primary" />
           </div>
           <DialogTitle className="text-center text-xl">
-            {step === "email" ? "Sign in to CityFrame" : "Enter verification code"}
+            {step === "email" ? "Sign in to City Frame" : "Enter verification code"}
           </DialogTitle>
           <DialogDescription className="text-center">
             {step === "email"

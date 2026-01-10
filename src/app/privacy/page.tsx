@@ -5,8 +5,8 @@ import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy - CityFrame",
-  description: "How CityFrame collects, uses, and protects your data.",
+  title: "Privacy Policy - City Frame",
+  description: "How City Frame collects, uses, and protects your data.",
 };
 
 export default function PrivacyPage() {
@@ -23,11 +23,11 @@ export default function PrivacyPage() {
             <Link href="/" className="flex items-center gap-2">
               <Image
                 src="/logo.webp"
-                alt="CityFrame"
+                alt="City Frame"
                 width={32}
                 height={32}
               />
-              <span className="font-semibold">CityFrame</span>
+              <span className="font-semibold">City Frame</span>
             </Link>
           </div>
         </div>
@@ -124,7 +124,7 @@ export default function PrivacyPage() {
               <h2 className="text-xl font-semibold mb-3">9. Contact</h2>
               <p className="text-muted-foreground">
                 For privacy-related questions or to exercise your rights, contact us at
-                privacy@cityframe.app
+                info@cityframe.app
               </p>
             </section>
           </div>

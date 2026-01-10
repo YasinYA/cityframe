@@ -1,6 +1,6 @@
 {
-  "name": "CityFrame",
-  "short_name": "CityFrame",
+  "name": "City Frame",
+  "short_name": "City Frame",
   "description": "Create stunning, device-perfect wallpapers from any city in the world",
   "start_url": "/",
   "display": "standalone",
