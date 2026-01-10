@@ -10,42 +10,51 @@ import confetti from "canvas-confetti";
 
 function SuccessContent() {
   const searchParams = useSearchParams();
-  const sessionId = searchParams.get("session_id");
+  const source = searchParams.get("source");
   const [verified, setVerified] = useState(false);
   const [verifying, setVerifying] = useState(true);
 
   useEffect(() => {
     async function verifyPayment() {
-      if (!sessionId) {
-        setVerifying(false);
+      // If coming from Paddle checkout
+      if (source === "paddle") {
+        try {
+          // Update Pro status via API
+          const res = await fetch("/api/paddle/status", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({}),
+          });
+
+          if (res.ok) {
+            setVerified(true);
+            // Celebrate with confetti
+            confetti({
+              particleCount: 100,
+              spread: 70,
+              origin: { y: 0.6 },
+            });
+          }
+        } catch (error) {
+          console.error("Verification error:", error);
+        } finally {
+          setVerifying(false);
+        }
         return;
       }
 
-      try {
-        const res = await fetch("/api/stripe/verify-session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId }),
-        });
-
-        if (res.ok) {
-          setVerified(true);
-          // Celebrate with confetti
-          confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 },
-          });
-        }
-      } catch (error) {
-        console.error("Verification error:", error);
-      } finally {
-        setVerifying(false);
-      }
+      // No source or unrecognized source - just show success
+      setVerified(true);
+      setVerifying(false);
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+      });
     }
 
     verifyPayment();
-  }, [sessionId]);
+  }, [source]);
 
   if (verifying) {
     return (
@@ -70,7 +79,7 @@ function SuccessContent() {
 
         <h1 className="text-2xl font-bold mb-2">Welcome to Pro!</h1>
         <p className="text-muted-foreground mb-6">
-          Your subscription is now active. You have access to all premium features.
+          Your purchase is complete. You have lifetime access to all premium features.
         </p>
 
         {/* Features unlocked */}
@@ -82,7 +91,7 @@ function SuccessContent() {
           <ul className="space-y-2 text-sm">
             <li className="flex items-center gap-2">
               <Check className="w-4 h-4 text-green-500" />
-              All 6 premium map styles
+              All 14 premium map styles
             </li>
             <li className="flex items-center gap-2">
               <Check className="w-4 h-4 text-green-500" />

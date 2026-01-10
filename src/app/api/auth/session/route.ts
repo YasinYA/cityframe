@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   try {
     const cookieStore = await cookies();
     const sessionEmail = cookieStore.get(SESSION_COOKIE_NAME)?.value;
-    const customerId = cookieStore.get("stripe_customer_id")?.value;
+    const proStatus = cookieStore.get("paddle_pro_status")?.value;
 
     if (!sessionEmail) {
       return NextResponse.json<SessionResponse>({
@@ -23,20 +23,8 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    let isPro = false;
-
-    // Only check Stripe if configured and customer ID exists
-    if (customerId && process.env.STRIPE_SECRET_KEY) {
-      try {
-        const { stripe } = await import("@/lib/stripe/config");
-        const customer = await stripe.customers.retrieve(customerId);
-        if (!customer.deleted) {
-          isPro = customer.metadata?.pro === "true";
-        }
-      } catch {
-        // Customer not found or Stripe error, that's ok
-      }
-    }
+    // Check Pro status from Paddle cookie
+    const isPro = proStatus === "true";
 
     return NextResponse.json<SessionResponse>({
       authenticated: true,

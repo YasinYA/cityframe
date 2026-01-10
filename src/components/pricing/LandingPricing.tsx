@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Check, Sparkles, Zap } from "lucide-react";
-import { PriceData } from "@/lib/stripe/config";
+import { PriceData } from "@/lib/paddle/config";
 import { motion } from "framer-motion";
 
 export function LandingPricing() {
@@ -15,7 +15,7 @@ export function LandingPricing() {
   useEffect(() => {
     async function loadPrice() {
       try {
-        const res = await fetch("/api/stripe/price");
+        const res = await fetch("/api/paddle/price");
         if (res.ok) {
           const data = await res.json();
           setPrice(data);

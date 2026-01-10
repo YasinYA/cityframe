@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useAuth } from "@/hooks/useAuth";
-import { createCheckoutSession } from "@/lib/stripe/client";
-import { PriceData } from "@/lib/stripe/config";
+import { openPaddleCheckout } from "@/lib/paddle/client";
+import { PriceData } from "@/lib/paddle/config";
 import { SignInModal } from "@/components/auth/SignInModal";
 import { Check, Sparkles, Zap, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -14,7 +14,7 @@ import Link from "next/link";
 
 export function PricingCards() {
   const { isPro, isLoading: subLoading } = useSubscription();
-  const { authenticated, isLoading: authLoading } = useAuth();
+  const { authenticated, isLoading: authLoading, user } = useAuth();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [signInOpen, setSignInOpen] = useState(false);
   const [price, setPrice] = useState<PriceData | null>(null);
@@ -25,7 +25,7 @@ export function PricingCards() {
   useEffect(() => {
     async function loadPrice() {
       try {
-        const res = await fetch("/api/stripe/price");
+        const res = await fetch("/api/paddle/price");
         if (res.ok) {
           const data = await res.json();
           setPrice(data);
@@ -48,23 +48,23 @@ export function PricingCards() {
 
     if (!price?.id) return;
 
-    // Check if Stripe is configured (fallback means not configured)
+    // Check if Paddle is configured (fallback means not configured)
     if (price.id === "fallback") {
       toast.error("Payments not configured", {
-        description: "Stripe is not set up yet. Please add STRIPE_SECRET_KEY to .env",
+        description: "Paddle is not set up yet. Please add PADDLE_API_KEY to .env",
       });
       return;
     }
 
     try {
       setIsCheckingOut(true);
-      await createCheckoutSession(price.id);
+      await openPaddleCheckout(price.id, user?.email || undefined);
     } catch (error) {
       console.error("Checkout error:", error);
       const message = error instanceof Error ? error.message : "Please try again later.";
-      if (message.includes("Stripe failed to load")) {
+      if (message.includes("NEXT_PUBLIC_PADDLE_CLIENT_TOKEN")) {
         toast.error("Payments not configured", {
-          description: "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is missing in .env",
+          description: "NEXT_PUBLIC_PADDLE_CLIENT_TOKEN is missing in .env",
         });
       } else {
         toast.error("Checkout failed", {

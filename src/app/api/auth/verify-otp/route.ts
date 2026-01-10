@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { verifyOTP, SESSION_COOKIE_NAME, SESSION_MAX_AGE } from "@/lib/auth/config";
 
 export async function POST(request: NextRequest) {
@@ -21,33 +22,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let customerId: string | null = null;
-    let isPro = false;
-
-    // Only use Stripe if configured
-    if (process.env.STRIPE_SECRET_KEY) {
-      try {
-        const { stripe } = await import("@/lib/stripe/config");
-
-        // Find or create Stripe customer for this email
-        const customers = await stripe.customers.list({
-          email: email.toLowerCase(),
-          limit: 1,
-        });
-
-        if (customers.data.length > 0) {
-          customerId = customers.data[0].id;
-          isPro = customers.data[0].metadata?.pro === "true";
-        } else {
-          const customer = await stripe.customers.create({
-            email: email.toLowerCase(),
-          });
-          customerId = customer.id;
-        }
-      } catch (stripeError) {
-        console.warn("Stripe not configured, skipping customer creation:", stripeError);
-      }
-    }
+    // Check if user already has Pro status from Paddle cookie
+    const cookieStore = await cookies();
+    const proStatus = cookieStore.get("paddle_pro_status")?.value;
+    const isPro = proStatus === "true";
 
     // Create session response
     const response = NextResponse.json({
@@ -65,16 +43,6 @@ export async function POST(request: NextRequest) {
       sameSite: "lax",
       maxAge: SESSION_MAX_AGE,
     });
-
-    // Also set stripe customer ID cookie if available
-    if (customerId) {
-      response.cookies.set("stripe_customer_id", customerId, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: SESSION_MAX_AGE,
-      });
-    }
 
     return response;
   } catch (error) {

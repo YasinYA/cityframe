@@ -41,7 +41,7 @@ export const images = pgTable("images", {
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: varchar("email", { length: 255 }).unique().notNull(),
-  stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
+  paddleCustomerId: varchar("paddle_customer_id", { length: 255 }),
   subscriptionStatus: varchar("subscription_status", { length: 20 }).default(
     "free"
   ),
