@@ -44,7 +44,7 @@ export default function PrivacyPage() {
               <p className="text-muted-foreground mb-2">We collect the following types of information:</p>
               <ul className="list-disc list-inside text-muted-foreground space-y-1">
                 <li><strong>Email address:</strong> When you create an account or make a purchase</li>
-                <li><strong>Payment information:</strong> Processed securely by Stripe (we do not store card details)</li>
+                <li><strong>Payment information:</strong> Processed securely by Paddle (we do not store card details)</li>
                 <li><strong>Usage data:</strong> Wallpaper generation history linked to your account</li>
                 <li><strong>Session data:</strong> Anonymous session identifiers for non-logged-in users</li>
               </ul>
@@ -75,7 +75,7 @@ export default function PrivacyPage() {
               <h2 className="text-xl font-semibold mb-3">4. Third-Party Services</h2>
               <p className="text-muted-foreground mb-2">We use the following third-party services:</p>
               <ul className="list-disc list-inside text-muted-foreground space-y-1">
-                <li><strong>Stripe:</strong> Payment processing</li>
+                <li><strong>Paddle:</strong> Payment processing (Merchant of Record)</li>
                 <li><strong>Resend:</strong> Email delivery</li>
                 <li><strong>Map providers:</strong> Map tile data for wallpaper generation</li>
               </ul>

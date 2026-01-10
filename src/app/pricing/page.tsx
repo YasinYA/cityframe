@@ -64,7 +64,7 @@ export default function PricingPage() {
               <div>
                 <h3 className="font-semibold mb-1">What payment methods do you accept?</h3>
                 <p className="text-muted-foreground">
-                  All major credit cards via Stripe.
+                  All major credit cards via Paddle.
                 </p>
               </div>
               <div>
