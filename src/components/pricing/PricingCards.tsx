@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { openPaddleCheckout } from "@/lib/paddle/client";
 import { PriceData } from "@/lib/paddle/config";
 import { SignInModal } from "@/components/auth/SignInModal";
+import { analytics } from "@/lib/analytics/mixpanel";
 import { Check, Sparkles, Zap, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -58,6 +59,11 @@ export function PricingCards() {
 
     try {
       setIsCheckingOut(true);
+      analytics.checkoutStarted({
+        priceId: price.id,
+        amount: price.amount,
+        currency: price.currency,
+      });
       await openPaddleCheckout(price.id, user?.email || undefined);
     } catch (error) {
       console.error("Checkout error:", error);

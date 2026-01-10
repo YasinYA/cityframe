@@ -1,10 +1,6 @@
 const requiredEnvVars = [
   'DATABASE_URL',
   'REDIS_URL',
-  'S3_ENDPOINT',
-  'S3_ACCESS_KEY',
-  'S3_SECRET_KEY',
-  'S3_BUCKET',
 ] as const;
 
 const optionalEnvVars = [
@@ -52,12 +48,6 @@ export const env = {
   // Database
   DATABASE_URL: process.env.DATABASE_URL!,
   REDIS_URL: process.env.REDIS_URL!,
-
-  // S3/MinIO
-  S3_ENDPOINT: process.env.S3_ENDPOINT!,
-  S3_ACCESS_KEY: process.env.S3_ACCESS_KEY!,
-  S3_SECRET_KEY: process.env.S3_SECRET_KEY!,
-  S3_BUCKET: process.env.S3_BUCKET || 'cityframe-wallpapers',
 
   // Optional services
   REPLICATE_API_TOKEN: process.env.REPLICATE_API_TOKEN,

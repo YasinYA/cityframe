@@ -31,7 +31,7 @@ export const images = pgTable("images", {
     .references(() => jobs.id, { onDelete: "cascade" })
     .notNull(),
   device: varchar("device", { length: 20 }).notNull(),
-  storageKey: varchar("storage_key", { length: 255 }).notNull(),
+  imageData: text("image_data").notNull(), // Base64 encoded image
   width: integer("width").notNull(),
   height: integer("height").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
