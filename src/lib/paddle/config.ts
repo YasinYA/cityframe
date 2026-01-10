@@ -1,6 +1,13 @@
 import { Paddle, Environment } from "@paddle/paddle-node-sdk";
 
-const environment = process.env.NODE_ENV === "production"
+// Allow explicit environment override via PADDLE_ENVIRONMENT
+// Values: "sandbox" or "production"
+// Defaults to production when NODE_ENV is production
+const environment = process.env.PADDLE_ENVIRONMENT === "sandbox"
+  ? Environment.sandbox
+  : process.env.PADDLE_ENVIRONMENT === "production"
+  ? Environment.production
+  : process.env.NODE_ENV === "production"
   ? Environment.production
   : Environment.sandbox;
 

@@ -24,6 +24,17 @@ declare global {
 
 let paddleInitialized = false;
 
+// Determine Paddle environment
+// NEXT_PUBLIC_PADDLE_ENVIRONMENT can be "sandbox" or "production"
+// Defaults based on NODE_ENV
+function getPaddleEnvironment(): "sandbox" | "production" {
+  const envOverride = process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT;
+  if (envOverride === "sandbox" || envOverride === "production") {
+    return envOverride;
+  }
+  return process.env.NODE_ENV === "production" ? "production" : "sandbox";
+}
+
 export function initializePaddle(): Promise<void> {
   return new Promise((resolve, reject) => {
     if (paddleInitialized && window.Paddle) {
@@ -37,13 +48,13 @@ export function initializePaddle(): Promise<void> {
       return;
     }
 
+    const paddleEnv = getPaddleEnvironment();
+
     // Check if script already exists
     if (document.querySelector('script[src*="paddle.js"]')) {
       if (window.Paddle) {
         window.Paddle.Initialize({ token: clientToken });
-        if (process.env.NODE_ENV !== "production") {
-          window.Paddle.Environment.set("sandbox");
-        }
+        window.Paddle.Environment.set(paddleEnv);
         paddleInitialized = true;
         resolve();
       } else {
@@ -52,9 +63,7 @@ export function initializePaddle(): Promise<void> {
           if (window.Paddle) {
             clearInterval(checkPaddle);
             window.Paddle.Initialize({ token: clientToken });
-            if (process.env.NODE_ENV !== "production") {
-              window.Paddle.Environment.set("sandbox");
-            }
+            window.Paddle.Environment.set(paddleEnv);
             paddleInitialized = true;
             resolve();
           }
@@ -71,9 +80,7 @@ export function initializePaddle(): Promise<void> {
     script.onload = () => {
       if (window.Paddle) {
         window.Paddle.Initialize({ token: clientToken });
-        if (process.env.NODE_ENV !== "production") {
-          window.Paddle.Environment.set("sandbox");
-        }
+        window.Paddle.Environment.set(paddleEnv);
         paddleInitialized = true;
         resolve();
       } else {
