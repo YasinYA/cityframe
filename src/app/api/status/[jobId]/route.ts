@@ -4,6 +4,8 @@ import { db } from "@/lib/db/client";
 import { jobs, images } from "@/lib/db/schema";
 import { getQueueJob } from "@/lib/queue/bullmq";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ jobId: string }> }

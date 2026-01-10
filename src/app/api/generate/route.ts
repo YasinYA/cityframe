@@ -5,6 +5,8 @@ import { jobs } from "@/lib/db/schema";
 import { addGenerationJob } from "@/lib/queue/bullmq";
 import { MapLocation, DeviceType, AIOptions } from "@/types";
 
+export const dynamic = "force-dynamic";
+
 interface GenerateRequestBody {
   location: MapLocation;
   style: string;
