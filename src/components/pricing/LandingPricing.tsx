@@ -39,26 +39,29 @@ export function LandingPricing() {
   };
 
   const features = [
-    "All 14 premium map styles",
-    "All devices (4K Desktop, Ultra-wide)",
-    "AI-upscaled 4K quality",
-    "No watermarks",
-    "Lifetime updates",
+    "21 premium map styles",
+    "All devices — phones to ultra-wide",
+    "AI-upscaled 4K resolution",
+    "Bilingual labels (English + native)",
+    "Smart crop focus for phones",
+    "Edge fade & location tags",
+    "No watermarks, ever",
+    "Lifetime access & updates",
   ];
 
   return (
-    <section id="pricing" className="py-16 px-4 bg-muted/30">
+    <section id="pricing" className="py-20 px-4">
       <div className="container max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-14"
         >
-          <h2 className="text-2xl font-bold mb-2">Simple pricing</h2>
-          <p className="text-muted-foreground">
-            One payment. Lifetime access.
+          <h2 className="text-3xl font-bold mb-3">Simple pricing</h2>
+          <p className="text-lg text-muted-foreground">
+            One payment. Lifetime access. No subscriptions.
           </p>
         </motion.div>
 
@@ -68,26 +71,28 @@ export function LandingPricing() {
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <Card className="max-w-sm mx-auto p-6 border-primary/50 shadow-lg">
-            <div className="flex items-center gap-2 mb-4">
-              <Sparkles className="w-5 h-5 text-amber-500" />
-              <h3 className="text-xl font-bold">{price?.name || "Pro"}</h3>
+          <Card className="max-w-md mx-auto p-8 border-primary/50 shadow-xl bg-gradient-to-b from-card to-card/50">
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+                <Sparkles className="w-5 h-5 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold">{price?.name || "Pro"}</h3>
             </div>
 
-            <div className="mb-6">
+            <div className="mb-8">
               {loading ? (
-                <div className="h-10 w-20 bg-muted animate-pulse rounded" />
+                <div className="h-12 w-24 bg-muted animate-pulse rounded" />
               ) : (
-                <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-bold">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-5xl font-bold">
                     {price ? formatPrice(price.amount, price.currency) : "$9.99"}
                   </span>
-                  <span className="text-muted-foreground text-sm">one-time</span>
+                  <span className="text-muted-foreground">one-time</span>
                 </div>
               )}
             </div>
 
-            <ul className="space-y-3 mb-6">
+            <ul className="space-y-3 mb-8">
               {features.map((feature, i) => (
                 <motion.li
                   key={feature}
@@ -120,18 +125,18 @@ export function LandingPricing() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex flex-wrap justify-center gap-6 mt-8 text-xs text-muted-foreground"
+          className="flex flex-wrap justify-center gap-8 mt-10 text-sm text-muted-foreground"
         >
-          <div className="flex items-center gap-1.5">
-            <Check className="w-3.5 h-3.5 text-green-500" />
+          <div className="flex items-center gap-2">
+            <Check className="w-4 h-4 text-green-500" />
             One-time payment
           </div>
-          <div className="flex items-center gap-1.5">
-            <Check className="w-3.5 h-3.5 text-green-500" />
+          <div className="flex items-center gap-2">
+            <Check className="w-4 h-4 text-green-500" />
             Secure checkout
           </div>
-          <div className="flex items-center gap-1.5">
-            <Check className="w-3.5 h-3.5 text-green-500" />
+          <div className="flex items-center gap-2">
+            <Check className="w-4 h-4 text-green-500" />
             Instant access
           </div>
         </motion.div>

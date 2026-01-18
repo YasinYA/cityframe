@@ -7,6 +7,7 @@
       "url": "https://tiles.openfreemap.org/planet"
     }
   },
+  "glyphs": "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
   "layers": [
     {
       "id": "background",
@@ -21,8 +22,8 @@
       "source": "openmaptiles",
       "source-layer": "water",
       "paint": {
-        "fill-color": "#bae6fd",
-        "fill-outline-color": "#7dd3fc"
+        "fill-color": "#A8D4E6",
+        "fill-outline-color": "#98C4D6"
       }
     },
     {
@@ -31,8 +32,8 @@
       "source": "openmaptiles",
       "source-layer": "landcover",
       "paint": {
-        "fill-color": "#e0f2fe",
-        "fill-opacity": 0.5
+        "fill-color": "#f0f9ff",
+        "fill-opacity": 0
       }
     },
     {
@@ -40,21 +41,65 @@
       "type": "fill",
       "source": "openmaptiles",
       "source-layer": "landuse",
-      "filter": ["==", "class", "park"],
+      "filter": [
+        "==",
+        "class",
+        "park"
+      ],
       "paint": {
-        "fill-color": "#cffafe",
-        "fill-opacity": 0.6
+        "fill-color": "#f0f9ff",
+        "fill-opacity": 0
       }
     },
     {
-      "id": "road-street",
+      "id": "road-residential",
       "type": "line",
       "source": "openmaptiles",
       "source-layer": "transportation",
+      "filter": [
+        "in",
+        "class",
+        "minor",
+        "service",
+        "path",
+        "track"
+      ],
       "paint": {
-        "line-color": "#0284c7",
-        "line-width": 1.5,
-        "line-opacity": 0.45
+        "line-color": "#bae6fd",
+        "line-width": 0.8,
+        "line-opacity": 0.6
+      }
+    },
+    {
+      "id": "road-tertiary",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+      "filter": [
+        "==",
+        "class",
+        "tertiary"
+      ],
+      "paint": {
+        "line-color": "#7dd3fc",
+        "line-width": 1.2,
+        "line-opacity": 0.7
+      }
+    },
+    {
+      "id": "road-secondary",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+      "filter": [
+        "==",
+        "class",
+        "secondary"
+      ],
+      "paint": {
+        "line-color": "#38bdf8",
+        "line-width": 1.8,
+        "line-opacity": 0.8
       }
     },
     {
@@ -62,11 +107,32 @@
       "type": "line",
       "source": "openmaptiles",
       "source-layer": "transportation",
-      "filter": ["in", "class", "primary", "secondary", "trunk", "motorway"],
+      "filter": [
+        "==",
+        "class",
+        "primary"
+      ],
       "paint": {
         "line-color": "#0ea5e9",
-        "line-width": 2.5,
+        "line-width": 2.2,
         "line-opacity": 0.9
+      }
+    },
+    {
+      "id": "road-motorway",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+      "filter": [
+        "in",
+        "class",
+        "motorway",
+        "trunk"
+      ],
+      "paint": {
+        "line-color": "#0284c7",
+        "line-width": 2.5,
+        "line-opacity": 1
       }
     },
     {
@@ -75,9 +141,28 @@
       "source": "openmaptiles",
       "source-layer": "building",
       "paint": {
-        "fill-color": "#e2e8f0",
-        "fill-opacity": 0.7,
-        "fill-outline-color": "#cbd5e1"
+        "fill-color": "#f0f9ff",
+        "fill-opacity": 0
+      }
+    },
+    {
+      "id": "building-3d",
+      "type": "fill-extrusion",
+      "source": "openmaptiles",
+      "source-layer": "building",
+      "minzoom": 14,
+      "paint": {
+        "fill-extrusion-color": "#0284c7",
+        "fill-extrusion-height": [
+          "coalesce",
+          [
+            "get",
+            "render_height"
+          ],
+          10
+        ],
+        "fill-extrusion-base": 0,
+        "fill-extrusion-opacity": 0.7
       }
     },
     {
@@ -85,11 +170,93 @@
       "type": "symbol",
       "source": "openmaptiles",
       "source-layer": "place",
-      "filter": ["in", "class", "city", "town", "village", "suburb", "neighbourhood"],
+      "filter": [
+        "in",
+        "class",
+        "city",
+        "town",
+        "village",
+        "suburb",
+        "neighbourhood"
+      ],
       "layout": {
-        "text-field": "{name}",
-        "text-font": ["Noto Sans Regular"],
-        "text-size": ["interpolate", ["linear"], ["zoom"], 8, 12, 14, 18],
+        "text-field": [
+          "format",
+          [
+            "coalesce",
+            [
+              "get",
+              "name:latin"
+            ],
+            [
+              "get",
+              "name_en"
+            ],
+            [
+              "get",
+              "name"
+            ]
+          ],
+          {},
+          "\n",
+          {},
+          [
+            "case",
+            [
+              "all",
+              [
+                "has",
+                "name"
+              ],
+              [
+                "!=",
+                [
+                  "get",
+                  "name"
+                ],
+                [
+                  "coalesce",
+                  [
+                    "get",
+                    "name:latin"
+                  ],
+                  [
+                    "get",
+                    "name_en"
+                  ],
+                  [
+                    "get",
+                    "name"
+                  ]
+                ]
+              ]
+            ],
+            [
+              "get",
+              "name"
+            ],
+            ""
+          ],
+          {
+            "font-scale": 0.75
+          }
+        ],
+        "text-font": [
+          "Noto Sans Regular"
+        ],
+        "text-size": [
+          "interpolate",
+          [
+            "linear"
+          ],
+          [
+            "zoom"
+          ],
+          8,
+          12,
+          14,
+          18
+        ],
         "text-transform": "uppercase",
         "text-letter-spacing": 0.1,
         "visibility": "none"
@@ -106,8 +273,70 @@
       "source": "openmaptiles",
       "source-layer": "transportation_name",
       "layout": {
-        "text-field": "{name}",
-        "text-font": ["Noto Sans Regular"],
+        "text-field": [
+          "format",
+          [
+            "coalesce",
+            [
+              "get",
+              "name:latin"
+            ],
+            [
+              "get",
+              "name_en"
+            ],
+            [
+              "get",
+              "name"
+            ]
+          ],
+          {},
+          "\n",
+          {},
+          [
+            "case",
+            [
+              "all",
+              [
+                "has",
+                "name"
+              ],
+              [
+                "!=",
+                [
+                  "get",
+                  "name"
+                ],
+                [
+                  "coalesce",
+                  [
+                    "get",
+                    "name:latin"
+                  ],
+                  [
+                    "get",
+                    "name_en"
+                  ],
+                  [
+                    "get",
+                    "name"
+                  ]
+                ]
+              ]
+            ],
+            [
+              "get",
+              "name"
+            ],
+            ""
+          ],
+          {
+            "font-scale": 0.75
+          }
+        ],
+        "text-font": [
+          "Noto Sans Regular"
+        ],
         "text-size": 10,
         "symbol-placement": "line",
         "visibility": "none"

@@ -4,6 +4,26 @@ import { MapStyle, DevicePreset, DeviceType } from "@/types";
 // CITYFRAME STYLES - Custom JSON wallpaper styles
 // =============================================================================
 
+// Road hierarchy colors (inspired by MapToPoster)
+export interface RoadColors {
+  motorway: string;
+  primary: string;
+  secondary: string;
+  tertiary: string;
+  residential: string;
+  default: string;
+}
+
+// Road width hierarchy
+export interface RoadWidths {
+  motorway: number;
+  primary: number;
+  secondary: number;
+  tertiary: number;
+  residential: number;
+  default: number;
+}
+
 export interface StyleConfig {
   id: string;
   name: string;
@@ -12,8 +32,15 @@ export interface StyleConfig {
   premium: boolean;
   map: {
     background: string;
-    roadColor: string;
-    roadWidth: number;
+    // Road hierarchy - can be full object or single color string (for backwards compat)
+    roads: RoadColors | string;
+    // Road widths - optional, defaults provided
+    roadWidths?: Partial<RoadWidths>;
+    // Feature colors (null = hidden/same as background)
+    water?: string | null;
+    parks?: string | null;
+    buildings?: string | null;
+    // Other options
     labels: boolean;
     contours?: boolean;
     contourColor?: string;
@@ -23,6 +50,31 @@ export interface StyleConfig {
     glowIntensity?: number;
   };
 }
+
+// Helper to normalize road colors (handle string or object)
+export function getRoadColors(roads: RoadColors | string): RoadColors {
+  if (typeof roads === "string") {
+    return {
+      motorway: roads,
+      primary: roads,
+      secondary: roads,
+      tertiary: roads,
+      residential: roads,
+      default: roads,
+    };
+  }
+  return roads;
+}
+
+// Default road widths
+export const DEFAULT_ROAD_WIDTHS: RoadWidths = {
+  motorway: 3,
+  primary: 2.5,
+  secondary: 2,
+  tertiary: 1.5,
+  residential: 1,
+  default: 1,
+};
 
 // Custom style JSON URLs (hosted in /public/styles/)
 const CUSTOM_STYLES = {
@@ -40,9 +92,17 @@ const CUSTOM_STYLES = {
   "desert-sand": "/styles/desert-sand.json",
   "nordic-navy": "/styles/nordic-navy.json",
   "neon-city": "/styles/neon-city.json",
+  "japanese-ink": "/styles/japanese-ink.json",
+  "blueprint": "/styles/blueprint.json",
+  "autumn": "/styles/autumn.json",
+  "noir": "/styles/noir.json",
+  "pastel-dream": "/styles/pastel-dream.json",
+  "terracotta": "/styles/terracotta.json",
+  "warm-beige": "/styles/warm-beige.json",
 } as const;
 
 // Style configurations - all use custom JSON files
+// Road colors now support hierarchy (motorway → residential) inspired by MapToPoster
 export const STYLE_CONFIGS: StyleConfig[] = [
   // Dark themes
   {
@@ -53,8 +113,16 @@ export const STYLE_CONFIGS: StyleConfig[] = [
     premium: false,
     map: {
       background: "#0f0f0f",
-      roadColor: "#eab308",
-      roadWidth: 3,
+      roads: {
+        motorway: "#fbbf24",
+        primary: "#eab308",
+        secondary: "#ca8a04",
+        tertiary: "#a16207",
+        residential: "#713f12",
+        default: "#a16207",
+      },
+      water: "#0a0a0a",
+      parks: null,
       labels: false,
     },
   },
@@ -66,8 +134,16 @@ export const STYLE_CONFIGS: StyleConfig[] = [
     premium: false,
     map: {
       background: "#0f172a",
-      roadColor: "#06b6d4",
-      roadWidth: 3,
+      roads: {
+        motorway: "#22d3ee",
+        primary: "#06b6d4",
+        secondary: "#0891b2",
+        tertiary: "#0e7490",
+        residential: "#155e75",
+        default: "#0e7490",
+      },
+      water: "#0c1222",
+      parks: null,
       labels: false,
     },
   },
@@ -79,8 +155,16 @@ export const STYLE_CONFIGS: StyleConfig[] = [
     premium: false,
     map: {
       background: "#1c1017",
-      roadColor: "#f43f5e",
-      roadWidth: 3,
+      roads: {
+        motorway: "#fb7185",
+        primary: "#f43f5e",
+        secondary: "#e11d48",
+        tertiary: "#be123c",
+        residential: "#9f1239",
+        default: "#be123c",
+      },
+      water: "#170d12",
+      parks: null,
       labels: false,
     },
   },
@@ -92,8 +176,16 @@ export const STYLE_CONFIGS: StyleConfig[] = [
     premium: false,
     map: {
       background: "#0a1f1a",
-      roadColor: "#22c55e",
-      roadWidth: 2.5,
+      roads: {
+        motorway: "#4ade80",
+        primary: "#22c55e",
+        secondary: "#16a34a",
+        tertiary: "#15803d",
+        residential: "#166534",
+        default: "#15803d",
+      },
+      water: "#071512",
+      parks: "#0d2920",
       labels: false,
     },
   },
@@ -105,8 +197,16 @@ export const STYLE_CONFIGS: StyleConfig[] = [
     premium: false,
     map: {
       background: "#1c1917",
-      roadColor: "#ea580c",
-      roadWidth: 3,
+      roads: {
+        motorway: "#fb923c",
+        primary: "#ea580c",
+        secondary: "#c2410c",
+        tertiary: "#9a3412",
+        residential: "#7c2d12",
+        default: "#9a3412",
+      },
+      water: "#171412",
+      parks: null,
       labels: false,
     },
   },
@@ -118,8 +218,16 @@ export const STYLE_CONFIGS: StyleConfig[] = [
     premium: false,
     map: {
       background: "#0f172a",
-      roadColor: "#f8fafc",
-      roadWidth: 2,
+      roads: {
+        motorway: "#f8fafc",
+        primary: "#e2e8f0",
+        secondary: "#cbd5e1",
+        tertiary: "#94a3b8",
+        residential: "#64748b",
+        default: "#94a3b8",
+      },
+      water: "#0c1322",
+      parks: null,
       labels: false,
     },
   },
@@ -132,8 +240,16 @@ export const STYLE_CONFIGS: StyleConfig[] = [
     premium: false,
     map: {
       background: "#f0fdf4",
-      roadColor: "#10b981",
-      roadWidth: 2.5,
+      roads: {
+        motorway: "#059669",
+        primary: "#10b981",
+        secondary: "#34d399",
+        tertiary: "#6ee7b7",
+        residential: "#a7f3d0",
+        default: "#6ee7b7",
+      },
+      water: "#9EC5B8",
+      parks: "#dcfce7",
       labels: false,
     },
   },
@@ -145,8 +261,16 @@ export const STYLE_CONFIGS: StyleConfig[] = [
     premium: false,
     map: {
       background: "#fef3c7",
-      roadColor: "#f97316",
-      roadWidth: 3,
+      roads: {
+        motorway: "#ea580c",
+        primary: "#f97316",
+        secondary: "#fb923c",
+        tertiary: "#fdba74",
+        residential: "#fed7aa",
+        default: "#fdba74",
+      },
+      water: "#D4A574",
+      parks: "#fef08a",
       labels: false,
     },
   },
@@ -158,8 +282,16 @@ export const STYLE_CONFIGS: StyleConfig[] = [
     premium: false,
     map: {
       background: "#f0f9ff",
-      roadColor: "#0ea5e9",
-      roadWidth: 2.5,
+      roads: {
+        motorway: "#0284c7",
+        primary: "#0ea5e9",
+        secondary: "#38bdf8",
+        tertiary: "#7dd3fc",
+        residential: "#bae6fd",
+        default: "#7dd3fc",
+      },
+      water: "#A8D4E6",
+      parks: null,
       labels: false,
     },
   },
@@ -171,8 +303,16 @@ export const STYLE_CONFIGS: StyleConfig[] = [
     premium: false,
     map: {
       background: "#faf5ff",
-      roadColor: "#a855f7",
-      roadWidth: 2.5,
+      roads: {
+        motorway: "#9333ea",
+        primary: "#a855f7",
+        secondary: "#c084fc",
+        tertiary: "#d8b4fe",
+        residential: "#e9d5ff",
+        default: "#d8b4fe",
+      },
+      water: "#C4B8D8",
+      parks: "#ede9fe",
       labels: false,
     },
   },
@@ -184,8 +324,16 @@ export const STYLE_CONFIGS: StyleConfig[] = [
     premium: false,
     map: {
       background: "#fff1f2",
-      roadColor: "#e11d48",
-      roadWidth: 2.5,
+      roads: {
+        motorway: "#be123c",
+        primary: "#e11d48",
+        secondary: "#f43f5e",
+        tertiary: "#fb7185",
+        residential: "#fda4af",
+        default: "#fb7185",
+      },
+      water: "#D4B8C0",
+      parks: "#fecdd3",
       labels: false,
     },
   },
@@ -197,8 +345,16 @@ export const STYLE_CONFIGS: StyleConfig[] = [
     premium: false,
     map: {
       background: "#fefce8",
-      roadColor: "#92400e",
-      roadWidth: 2.5,
+      roads: {
+        motorway: "#78350f",
+        primary: "#92400e",
+        secondary: "#a16207",
+        tertiary: "#ca8a04",
+        residential: "#eab308",
+        default: "#ca8a04",
+      },
+      water: "#C9B896",
+      parks: "#fef08a",
       labels: false,
     },
   },
@@ -210,8 +366,16 @@ export const STYLE_CONFIGS: StyleConfig[] = [
     premium: false,
     map: {
       background: "#1e2a4a",
-      roadColor: "#ffffff",
-      roadWidth: 1.8,
+      roads: {
+        motorway: "#ffffff",
+        primary: "#e2e8f0",
+        secondary: "#cbd5e1",
+        tertiary: "#94a3b8",
+        residential: "#64748b",
+        default: "#94a3b8",
+      },
+      water: "#192240",
+      parks: null,
       labels: false,
     },
   },
@@ -222,9 +386,174 @@ export const STYLE_CONFIGS: StyleConfig[] = [
     description: "Cyberpunk neon glow with magenta and cyan roads on pure black.",
     premium: false,
     map: {
+      background: "#0D0D1A",
+      roads: {
+        motorway: "#FF00FF",
+        primary: "#00FFFF",
+        secondary: "#00C8C8",
+        tertiary: "#0098A0",
+        residential: "#006870",
+        default: "#0098A0",
+      },
+      water: "#0A0A15",
+      parks: "#151525",
+      labels: false,
+      glow: true,
+      glowColor: "#FF00FF",
+      glowIntensity: 0.5,
+    },
+  },
+  // NEW: Japanese Ink theme (ported from MapToPoster)
+  {
+    id: "japanese-ink",
+    name: "Japanese Ink",
+    category: "light",
+    description: "Traditional ink wash inspired - minimalist with subtle red accent.",
+    premium: true,
+    map: {
+      background: "#FAF8F5",
+      roads: {
+        motorway: "#8B2500",
+        primary: "#4A4A4A",
+        secondary: "#6A6A6A",
+        tertiary: "#909090",
+        residential: "#B8B8B8",
+        default: "#909090",
+      },
+      water: "#E8E4E0",
+      parks: "#F0EDE8",
+      labels: false,
+    },
+  },
+  // NEW: Blueprint theme (ported from MapToPoster)
+  {
+    id: "blueprint",
+    name: "Blueprint",
+    category: "dark",
+    description: "Classic architectural blueprint style with white lines on deep blue.",
+    premium: true,
+    map: {
+      background: "#1a3a5c",
+      roads: {
+        motorway: "#ffffff",
+        primary: "#e8f4fc",
+        secondary: "#c8dff0",
+        tertiary: "#a8c8e0",
+        residential: "#88b0d0",
+        default: "#a8c8e0",
+      },
+      water: "#153050",
+      parks: null,
+      labels: false,
+    },
+  },
+  // NEW: Autumn theme (ported from MapToPoster)
+  {
+    id: "autumn",
+    name: "Autumn",
+    category: "light",
+    description: "Warm fall colors with burnt oranges, deep reds, and golden yellows.",
+    premium: true,
+    map: {
+      background: "#FBF7F0",
+      roads: {
+        motorway: "#8B2500",
+        primary: "#B8450A",
+        secondary: "#CC7A30",
+        tertiary: "#D9A050",
+        residential: "#E8C888",
+        default: "#CC7A30",
+      },
+      water: "#A8B8B8",
+      parks: "#E8E0D0",
+      labels: false,
+    },
+  },
+  // NEW: Noir theme (ported from MapToPoster)
+  {
+    id: "noir",
+    name: "Noir",
+    category: "dark",
+    description: "Pure black and white high contrast - modern gallery aesthetic.",
+    premium: true,
+    map: {
       background: "#000000",
-      roadColor: "#ff00ff",
-      roadWidth: 2,
+      roads: {
+        motorway: "#FFFFFF",
+        primary: "#E0E0E0",
+        secondary: "#B0B0B0",
+        tertiary: "#808080",
+        residential: "#505050",
+        default: "#808080",
+      },
+      water: "#0A0A0A",
+      parks: "#111111",
+      labels: false,
+    },
+  },
+  // NEW: Pastel Dream theme (ported from MapToPoster)
+  {
+    id: "pastel-dream",
+    name: "Pastel Dream",
+    category: "light",
+    description: "Soft muted pastels with dusty blues and mauves.",
+    premium: true,
+    map: {
+      background: "#FAF7F2",
+      roads: {
+        motorway: "#7B8794",
+        primary: "#9BA4B0",
+        secondary: "#B5AEBB",
+        tertiary: "#C9C0C9",
+        residential: "#D8D2D8",
+        default: "#C9C0C9",
+      },
+      water: "#D4E4ED",
+      parks: "#E8EDE4",
+      labels: false,
+    },
+  },
+  // NEW: Terracotta theme (ported from MapToPoster)
+  {
+    id: "terracotta",
+    name: "Terracotta",
+    category: "light",
+    description: "Mediterranean warmth with earthy clay and burnt orange tones.",
+    premium: true,
+    map: {
+      background: "#F5EDE4",
+      roads: {
+        motorway: "#A0522D",
+        primary: "#B8653A",
+        secondary: "#C9846A",
+        tertiary: "#D9A08A",
+        residential: "#E5C4B0",
+        default: "#D9A08A",
+      },
+      water: "#A8C4C4",
+      parks: "#E8E0D0",
+      labels: false,
+    },
+  },
+  // NEW: Warm Beige theme (ported from MapToPoster)
+  {
+    id: "warm-beige",
+    name: "Warm Beige",
+    category: "light",
+    description: "Vintage cartographic style with earthy sepia tones.",
+    premium: true,
+    map: {
+      background: "#F5F0E8",
+      roads: {
+        motorway: "#8B7355",
+        primary: "#A08B70",
+        secondary: "#B5A48E",
+        tertiary: "#C9BBAA",
+        residential: "#D9CFC2",
+        default: "#C9BBAA",
+      },
+      water: "#B8C4C4",
+      parks: "#E8E4D8",
       labels: false,
     },
   },
@@ -261,6 +590,13 @@ export const STYLE_ICONS: Record<string, string> = {
   "desert-sand": "◬",
   "nordic-navy": "▬",
   "neon-city": "◈",
+  "japanese-ink": "墨",
+  "blueprint": "▦",
+  "autumn": "🍂",
+  "noir": "◼",
+  "pastel-dream": "◌",
+  "terracotta": "▤",
+  "warm-beige": "▧",
 };
 
 // Style gradient backgrounds for previews
@@ -279,6 +615,13 @@ export const STYLE_GRADIENTS: Record<string, string> = {
   "desert-sand": "from-amber-100 via-yellow-50 to-amber-100",
   "nordic-navy": "from-blue-950 via-indigo-950 to-blue-950",
   "neon-city": "from-black via-fuchsia-950 to-black",
+  "japanese-ink": "from-stone-100 via-stone-50 to-stone-100",
+  "blueprint": "from-blue-900 via-blue-800 to-blue-900",
+  "autumn": "from-orange-100 via-amber-50 to-orange-100",
+  "noir": "from-black via-zinc-900 to-black",
+  "pastel-dream": "from-slate-100 via-purple-50 to-slate-100",
+  "terracotta": "from-orange-100 via-stone-50 to-orange-100",
+  "warm-beige": "from-amber-100 via-stone-50 to-amber-100",
 };
 
 // Device presets

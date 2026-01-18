@@ -34,6 +34,12 @@ export interface DevicePreset {
   description: string;
 }
 
+// Crop position for device wallpapers
+export type CropPosition =
+  | "top-left" | "top" | "top-right"
+  | "left" | "center" | "right"
+  | "bottom-left" | "bottom" | "bottom-right";
+
 // Job types
 export type JobStatus = "pending" | "processing" | "completed" | "failed";
 

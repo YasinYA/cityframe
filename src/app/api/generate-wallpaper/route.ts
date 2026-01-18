@@ -1,13 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import Replicate from "replicate";
 import sharp from "sharp";
-import { DeviceType } from "@/types";
+import { DeviceType, CropPosition } from "@/types";
 import { DEVICE_PRESETS } from "@/lib/map/styles";
 
 interface GenerateWallpaperRequest {
   image: string; // base64 data URL from client
   style: string;
   devices: DeviceType[];
+  cropPosition?: CropPosition;
+}
+
+// Map CropPosition to sharp position string
+function getSharpPosition(cropPosition: CropPosition): string {
+  const positionMap: Record<CropPosition, string> = {
+    "top-left": "left top",
+    "top": "top",
+    "top-right": "right top",
+    "left": "left",
+    "center": "center",
+    "right": "right",
+    "bottom-left": "left bottom",
+    "bottom": "bottom",
+    "bottom-right": "right bottom",
+  };
+  return positionMap[cropPosition] || "center";
 }
 
 const replicate = new Replicate({
@@ -51,9 +68,9 @@ async function upscaleImage(imageBuffer: Buffer, scale: number = 4): Promise<Buf
 export async function POST(request: NextRequest) {
   try {
     const body: GenerateWallpaperRequest = await request.json();
-    const { image, devices } = body;
+    const { image, devices, cropPosition = "center" } = body;
 
-    console.log("Generating wallpapers for devices:", devices);
+    console.log("Generating wallpapers for devices:", devices, "crop:", cropPosition);
 
     if (!image || !devices || devices.length === 0) {
       return NextResponse.json(
@@ -99,7 +116,7 @@ export async function POST(request: NextRequest) {
         const processedBuffer = await sharp(imageBuffer)
           .resize(preset.width, preset.height, {
             fit: "cover",
-            position: "center",
+            position: getSharpPosition(cropPosition),
           })
           .png({ quality: 100 })
           .toBuffer();

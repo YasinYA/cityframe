@@ -4,6 +4,7 @@ import { MapView } from '@/components/map/MapView'
 import { StylePicker } from '@/components/styles/StylePicker'
 import { DevicePicker } from '@/components/devices/DevicePicker'
 import { GenerateButton } from '@/components/generation/GenerateButton'
+import { CropPositionSelector } from '@/components/generation/CropPositionSelector'
 import { SignInModal } from '@/components/auth/SignInModal'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -206,6 +207,11 @@ export default function AppPage() {
 									<h2 className='text-sm font-semibold'>Devices</h2>
 								</div>
 								<DevicePicker />
+							</section>
+
+							{/* Crop Position Section */}
+							<section>
+								<CropPositionSelector />
 							</section>
 						</div>
 

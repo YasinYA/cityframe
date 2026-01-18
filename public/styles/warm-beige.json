@@ -1,6 +1,6 @@
 {
   "version": 8,
-  "name": "Lavender Haze",
+  "name": "Warm Beige",
   "sources": {
     "openmaptiles": {
       "type": "vector",
@@ -13,7 +13,7 @@
       "id": "background",
       "type": "background",
       "paint": {
-        "background-color": "#faf5ff"
+        "background-color": "#F5F0E8"
       }
     },
     {
@@ -22,8 +22,8 @@
       "source": "openmaptiles",
       "source-layer": "water",
       "paint": {
-        "fill-color": "#C4B8D8",
-        "fill-outline-color": "#B4A8C8"
+        "fill-color": "#B8C4C4",
+        "fill-outline-color": "#A8B4B4"
       }
     },
     {
@@ -32,7 +32,7 @@
       "source": "openmaptiles",
       "source-layer": "landcover",
       "paint": {
-        "fill-color": "#ede9fe",
+        "fill-color": "#E8E4D8",
         "fill-opacity": 0.4
       }
     },
@@ -47,7 +47,7 @@
         "park"
       ],
       "paint": {
-        "fill-color": "#ede9fe",
+        "fill-color": "#E8E4D8",
         "fill-opacity": 0.5
       }
     },
@@ -65,7 +65,7 @@
         "track"
       ],
       "paint": {
-        "line-color": "#e9d5ff",
+        "line-color": "#D9CFC2",
         "line-width": 0.8,
         "line-opacity": 0.6
       }
@@ -81,7 +81,7 @@
         "tertiary"
       ],
       "paint": {
-        "line-color": "#d8b4fe",
+        "line-color": "#C9BBAA",
         "line-width": 1.2,
         "line-opacity": 0.7
       }
@@ -97,7 +97,7 @@
         "secondary"
       ],
       "paint": {
-        "line-color": "#c084fc",
+        "line-color": "#B5A48E",
         "line-width": 1.8,
         "line-opacity": 0.8
       }
@@ -113,7 +113,7 @@
         "primary"
       ],
       "paint": {
-        "line-color": "#a855f7",
+        "line-color": "#A08B70",
         "line-width": 2.2,
         "line-opacity": 0.9
       }
@@ -130,7 +130,7 @@
         "trunk"
       ],
       "paint": {
-        "line-color": "#9333ea",
+        "line-color": "#8B7355",
         "line-width": 2.5,
         "line-opacity": 1
       }
@@ -141,7 +141,7 @@
       "source": "openmaptiles",
       "source-layer": "building",
       "paint": {
-        "fill-color": "#faf5ff",
+        "fill-color": "#F5F0E8",
         "fill-opacity": 0
       }
     },
@@ -152,7 +152,7 @@
       "source-layer": "building",
       "minzoom": 14,
       "paint": {
-        "fill-extrusion-color": "#9333ea",
+        "fill-extrusion-color": "#8B7355",
         "fill-extrusion-height": [
           "coalesce",
           [
@@ -262,8 +262,8 @@
         "visibility": "none"
       },
       "paint": {
-        "text-color": "#5b21b6",
-        "text-halo-color": "#faf5ff",
+        "text-color": "#6B5B4F",
+        "text-halo-color": "#F5F0E8",
         "text-halo-width": 2
       }
     },
@@ -342,8 +342,8 @@
         "visibility": "none"
       },
       "paint": {
-        "text-color": "#6d28d9",
-        "text-halo-color": "#faf5ff",
+        "text-color": "#6B5B4F",
+        "text-halo-color": "#F5F0E8",
         "text-halo-width": 1
       }
     }

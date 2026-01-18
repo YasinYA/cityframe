@@ -87,6 +87,7 @@ export function CitySearch({ onSelect }: CitySearchProps) {
     onSelect(lat, lng);
     setQuery(cityName);
     setCityName(cityName);
+    setResults([]);
     setIsOpen(false);
   };
 

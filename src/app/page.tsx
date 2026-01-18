@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, MapPin, Sparkles, Monitor, Smartphone, Tablet, MonitorPlay, User, LogOut } from "lucide-react";
+import { ArrowRight, MapPin, Sparkles, Monitor, Smartphone, Tablet, MonitorPlay, User, LogOut, Globe, Crop, Blend, Tag } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -184,7 +184,7 @@ export default function LandingPage() {
                 transition={{ duration: 0.6, delay: 0.1 }}
                 className="text-lg text-muted-foreground mb-8 max-w-md"
               >
-                Turn any location into stunning 4K wallpapers for all your devices. Powered by AI upscaling.
+                Turn any location into stunning 4K wallpapers. Bilingual labels, smart cropping, and cinematic effects — all in one click.
               </motion.p>
 
               <motion.div
@@ -319,19 +319,19 @@ export default function LandingPage() {
       </section>
 
       {/* How it works */}
-      <section className="py-16 px-4 bg-muted/30">
-        <div className="container max-w-4xl mx-auto">
+      <section className="py-20 px-4 bg-muted/30">
+        <div className="container max-w-5xl mx-auto">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.5 }}
-            className="text-2xl font-bold text-center mb-12"
+            className="text-3xl font-bold text-center mb-16"
           >
             Three steps to your perfect wallpaper
           </motion.h2>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-12">
             {[
               { icon: MapPin, title: "Pick a location", desc: "Search any city or navigate the map to find your spot" },
               { icon: Sparkles, title: "Choose a style", desc: `Select from ${STYLE_CONFIGS.length} unique map styles` },
@@ -348,12 +348,55 @@ export default function LandingPage() {
                 <motion.div
                   whileHover={{ scale: 1.1 }}
                   transition={{ type: "spring", stiffness: 300 }}
-                  className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4"
+                  className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5"
                 >
-                  <step.icon className="w-5 h-5 text-primary" />
+                  <step.icon className="w-7 h-7 text-primary" />
                 </motion.div>
-                <h3 className="font-semibold mb-2">{step.title}</h3>
-                <p className="text-sm text-muted-foreground">{step.desc}</p>
+                <h3 className="font-semibold text-lg mb-2">{step.title}</h3>
+                <p className="text-muted-foreground">{step.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-20 px-4">
+        <div className="container max-w-5xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5 }}
+            className="text-3xl font-bold text-center mb-16"
+          >
+            Made for every city
+          </motion.h2>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
+            {[
+              { icon: Globe, title: "Bilingual Labels", desc: "English + native scripts" },
+              { icon: Crop, title: "Smart Focus", desc: "Pick your crop area" },
+              { icon: Blend, title: "Edge Fade", desc: "Cinematic vignette" },
+              { icon: Tag, title: "Location Tag", desc: "Themed city overlay" },
+            ].map((feature, i) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="text-center"
+              >
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5"
+                >
+                  <feature.icon className="w-7 h-7 text-primary" />
+                </motion.div>
+                <h3 className="font-semibold mb-2">{feature.title}</h3>
+                <p className="text-sm text-muted-foreground">{feature.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -361,17 +404,17 @@ export default function LandingPage() {
       </section>
 
       {/* Styles Preview */}
-      <section id="styles" className="py-16 px-4">
+      <section id="styles" className="py-20 px-4 bg-muted/30">
         <div className="container max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.5 }}
-            className="text-center mb-10"
+            className="text-center mb-14"
           >
-            <h2 className="text-2xl font-bold mb-2">Beautiful styles</h2>
-            <p className="text-muted-foreground">
+            <h2 className="text-3xl font-bold mb-3">Beautiful styles</h2>
+            <p className="text-lg text-muted-foreground">
               From minimal to bold — find your aesthetic
             </p>
           </motion.div>
@@ -419,7 +462,7 @@ export default function LandingPage() {
       <LandingPricing />
 
       {/* Final CTA */}
-      <section className="py-16 px-4">
+      <section className="py-20 px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -427,11 +470,11 @@ export default function LandingPage() {
           transition={{ duration: 0.5 }}
           className="container max-w-2xl mx-auto text-center"
         >
-          <h2 className="text-2xl font-bold mb-4">
-            Ready to create?
+          <h2 className="text-3xl font-bold mb-5">
+            Your city deserves better wallpapers
           </h2>
-          <p className="text-muted-foreground mb-6">
-            Start making beautiful wallpapers in seconds.
+          <p className="text-lg text-muted-foreground mb-8">
+            From Dubai to Tokyo, New York to Paris — make it yours.
           </p>
           <Link href="/app">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>

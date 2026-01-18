@@ -31,6 +31,7 @@ export function GenerateButton() {
     reset,
     selectedStyle,
     selectedDevices,
+    mapInstance,
   } = useAppStore();
 
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
@@ -189,6 +190,16 @@ export function GenerateButton() {
           </span>
         </div>
       </div>
+    );
+  }
+
+  // Map not ready state
+  if (!mapInstance) {
+    return (
+      <Button className="w-full gap-2" disabled>
+        <Loader2 className="w-4 h-4 animate-spin" />
+        Loading map...
+      </Button>
     );
   }
 

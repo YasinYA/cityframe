@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, forwardRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import MapGL, { NavigationControl, MapRef } from "react-map-gl/maplibre";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -8,7 +8,7 @@ import { CitySearch } from "./CitySearch";
 import { CityNameCard } from "./CityNameCard";
 import { MapControls } from "./MapControls";
 import { useAppStore } from "@/lib/store";
-import { getStyleById } from "@/lib/map/styles";
+import { getStyleById, getStyleConfig } from "@/lib/map/styles";
 import { applyStyleToMap, setLabelsVisibility } from "@/lib/map/palettes";
 import { MapLocation } from "@/types";
 
@@ -16,7 +16,7 @@ import { MapLocation } from "@/types";
 
 export default function MapViewClient() {
   const mapRef = useRef<MapRef>(null);
-  const { location, setLocation, selectedStyle, showLabels, toggleLabels, setMapInstance } = useAppStore();
+  const { location, setLocation, selectedStyle, showLabels, toggleLabels, setMapInstance, showLocationTag, toggleLocationTag, showVignette, toggleVignette, vignetteSize, setVignetteSize } = useAppStore();
   const showLabelsRef = useRef(showLabels);
 
   // Keep ref in sync with state
@@ -24,6 +24,7 @@ export default function MapViewClient() {
     showLabelsRef.current = showLabels;
   }, [showLabels]);
   const [showGrid, setShowGrid] = useState(false);
+  const [show3D, setShow3D] = useState(false);
   const [viewState, setViewState] = useState({
     longitude: location.lng,
     latitude: location.lat,
@@ -33,8 +34,12 @@ export default function MapViewClient() {
   });
 
   const styleConfig = getStyleById(selectedStyle);
+  const themeConfig = getStyleConfig(selectedStyle);
   // Default to Positron (open-source light style)
   const mapStyle = styleConfig?.mapStyle || "https://tiles.openfreemap.org/styles/positron";
+
+  // Get theme background color for vignette (default to black for unknown themes)
+  const vignetteColor = themeConfig?.map?.background || "#000000";
 
   const onMove = useCallback((evt: { viewState: typeof viewState }) => {
     setViewState(evt.viewState);
@@ -71,6 +76,24 @@ export default function MapViewClient() {
     setViewState((prev) => ({ ...prev, pitch }));
   };
 
+  // Toggle 3D building layer visibility
+  const toggle3DBuildings = useCallback(() => {
+    const map = mapRef.current?.getMap();
+    if (!map) return;
+
+    const newState = !show3D;
+    setShow3D(newState);
+
+    // Set 3D building layer visibility
+    try {
+      if (map.getLayer("building-3d")) {
+        map.setLayoutProperty("building-3d", "visibility", newState ? "visible" : "none");
+      }
+    } catch {
+      // Layer might not exist
+    }
+  }, [show3D]);
+
   // Sync viewState with location from store
   useEffect(() => {
     setViewState({
@@ -90,7 +113,13 @@ export default function MapViewClient() {
     setLabelsVisibility(map, showLabels);
   }, [showLabels]);
 
-  // Apply labels when style changes
+  // Keep show3D ref in sync
+  const show3DRef = useRef(show3D);
+  useEffect(() => {
+    show3DRef.current = show3D;
+  }, [show3D]);
+
+  // Apply labels and 3D visibility when style changes
   useEffect(() => {
     const map = mapRef.current?.getMap();
     if (!map) return;
@@ -98,6 +127,14 @@ export default function MapViewClient() {
     // Use idle event which fires after style is fully loaded and rendered
     const handleIdle = () => {
       setLabelsVisibility(map, showLabelsRef.current);
+      // Sync 3D building visibility
+      try {
+        if (map.getLayer("building-3d")) {
+          map.setLayoutProperty("building-3d", "visibility", show3DRef.current ? "visible" : "none");
+        }
+      } catch {
+        // Layer might not exist
+      }
       map.off("idle", handleIdle);
     };
 
@@ -119,6 +156,15 @@ export default function MapViewClient() {
     // Apply initial style and labels
     applyStyleToMap(map, selectedStyle);
     setLabelsVisibility(map, showLabelsRef.current);
+
+    // Hide 3D buildings by default
+    try {
+      if (map.getLayer("building-3d")) {
+        map.setLayoutProperty("building-3d", "visibility", "none");
+      }
+    } catch {
+      // Layer might not exist
+    }
   }, [selectedStyle, setMapInstance]);
 
   // Cleanup map instance on unmount
@@ -159,11 +205,19 @@ export default function MapViewClient() {
           pitch={viewState.pitch}
           showGrid={showGrid}
           showLabels={showLabels}
+          showVignette={showVignette}
+          show3D={show3D}
+          showLocationTag={showLocationTag}
+          vignetteSize={vignetteSize}
           onZoomChange={handleZoomChange}
           onBearingChange={handleBearingChange}
           onPitchChange={handlePitchChange}
           onGridToggle={() => setShowGrid(!showGrid)}
           onLabelsToggle={toggleLabels}
+          onVignetteToggle={toggleVignette}
+          on3DToggle={toggle3DBuildings}
+          onLocationTagToggle={toggleLocationTag}
+          onVignetteSizeChange={setVignetteSize}
         />
       </div>
 
@@ -188,6 +242,51 @@ export default function MapViewClient() {
             </defs>
             <rect width="100%" height="100%" fill="url(#grid)" />
           </svg>
+        </div>
+      )}
+
+      {/* Vignette/Edge Fade Overlay - uses theme background color */}
+      {showVignette && (
+        <div className="absolute inset-0 pointer-events-none z-5">
+          {/* Top fade */}
+          <div
+            className="absolute top-0 left-0 right-0"
+            style={{
+              height: `${vignetteSize}%`,
+              background: `linear-gradient(to bottom, ${vignetteColor} 0%, transparent 100%)`
+            }}
+          />
+          {/* Bottom fade */}
+          <div
+            className="absolute bottom-0 left-0 right-0"
+            style={{
+              height: `${vignetteSize}%`,
+              background: `linear-gradient(to top, ${vignetteColor} 0%, transparent 100%)`
+            }}
+          />
+          {/* Left fade */}
+          <div
+            className="absolute top-0 bottom-0 left-0"
+            style={{
+              width: `${vignetteSize * 0.67}%`,
+              background: `linear-gradient(to right, ${vignetteColor}CC 0%, transparent 100%)`
+            }}
+          />
+          {/* Right fade */}
+          <div
+            className="absolute top-0 bottom-0 right-0"
+            style={{
+              width: `${vignetteSize * 0.67}%`,
+              background: `linear-gradient(to left, ${vignetteColor}CC 0%, transparent 100%)`
+            }}
+          />
+          {/* Corner vignettes for smoother effect */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `radial-gradient(ellipse at center, transparent ${100 - vignetteSize * 2}%, ${vignetteColor}80 100%)`
+            }}
+          />
         </div>
       )}
 

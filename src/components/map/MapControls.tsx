@@ -2,7 +2,7 @@
 
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import { Grid3X3, RotateCcw, Type } from "lucide-react";
+import { Grid3X3, RotateCcw, Type, CircleDot, Box, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MapControlsProps {
@@ -11,11 +11,19 @@ interface MapControlsProps {
   pitch: number;
   showGrid: boolean;
   showLabels: boolean;
+  showVignette: boolean;
+  show3D: boolean;
+  showLocationTag: boolean;
+  vignetteSize: number;
   onZoomChange: (zoom: number) => void;
   onBearingChange: (bearing: number) => void;
   onPitchChange: (pitch: number) => void;
   onGridToggle: () => void;
   onLabelsToggle: () => void;
+  onVignetteToggle: () => void;
+  on3DToggle: () => void;
+  onLocationTagToggle: () => void;
+  onVignetteSizeChange: (size: number) => void;
 }
 
 export function MapControls({
@@ -24,11 +32,19 @@ export function MapControls({
   pitch,
   showGrid,
   showLabels,
+  showVignette,
+  show3D,
+  showLocationTag,
+  vignetteSize,
   onZoomChange,
   onBearingChange,
   onPitchChange,
   onGridToggle,
   onLabelsToggle,
+  onVignetteToggle,
+  on3DToggle,
+  onLocationTagToggle,
+  onVignetteSizeChange,
 }: MapControlsProps) {
   const handleReset = () => {
     onBearingChange(0);
@@ -104,6 +120,50 @@ export function MapControls({
             Grid
           </Button>
         </div>
+        <div className="flex gap-2">
+          <Button
+            variant={showVignette ? "default" : "outline"}
+            size="sm"
+            className="flex-1"
+            onClick={onVignetteToggle}
+          >
+            <CircleDot className="w-4 h-4" />
+            Fade
+          </Button>
+          <Button
+            variant={show3D ? "default" : "outline"}
+            size="sm"
+            className="flex-1"
+            onClick={on3DToggle}
+          >
+            <Box className="w-4 h-4" />
+            3D
+          </Button>
+        </div>
+        <Button
+          variant={showLocationTag ? "default" : "outline"}
+          size="sm"
+          className="w-full"
+          onClick={onLocationTagToggle}
+        >
+          <MapPin className="w-4 h-4" />
+          Location Tag
+        </Button>
+        {showVignette && (
+          <div className="space-y-2 pt-1">
+            <div className="flex justify-between text-xs">
+              <span className="text-muted-foreground font-medium">Fade Size</span>
+              <span className="font-mono text-foreground">{vignetteSize}%</span>
+            </div>
+            <Slider
+              value={[vignetteSize]}
+              min={5}
+              max={40}
+              step={1}
+              onValueChange={([value]) => onVignetteSizeChange(value)}
+            />
+          </div>
+        )}
         <Button
           variant="outline"
           size="sm"

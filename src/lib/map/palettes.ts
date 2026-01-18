@@ -1,36 +1,53 @@
 // Apply style configurations to MapLibre map layers at runtime
 import type { Map as MapLibreMap } from "maplibre-gl";
-import { getStyleConfig, type StyleConfig } from "./styles";
+import { getStyleConfig, getRoadColors, DEFAULT_ROAD_WIDTHS, type StyleConfig } from "./styles";
 
 // Layer IDs from OpenFreeMap/OpenMapTiles schema
+// Organized by road hierarchy for MapToPoster-style coloring
+const ROAD_HIERARCHY = {
+  motorway: [
+    "tunnel_motorway",
+    "road_motorway",
+    "bridge_motorway",
+    "tunnel_trunk",
+    "road_trunk",
+    "bridge_trunk",
+  ],
+  primary: [
+    "tunnel_primary",
+    "road_primary",
+    "bridge_primary",
+  ],
+  secondary: [
+    "tunnel_secondary",
+    "road_secondary",
+    "bridge_secondary",
+  ],
+  tertiary: [
+    "tunnel_tertiary",
+    "road_tertiary",
+    "bridge_tertiary",
+  ],
+  residential: [
+    "tunnel_minor",
+    "tunnel_service",
+    "road_minor",
+    "road_service",
+    "road_path",
+    "road_pedestrian",
+    "road_track",
+    "bridge_minor",
+    "bridge_service",
+  ],
+};
+
+// Flat list for backwards compatibility
 const ROAD_LAYERS = [
-  // Tunnels
-  "tunnel_motorway",
-  "tunnel_trunk",
-  "tunnel_primary",
-  "tunnel_secondary",
-  "tunnel_tertiary",
-  "tunnel_minor",
-  "tunnel_service",
-  // Regular roads
-  "road_motorway",
-  "road_trunk",
-  "road_primary",
-  "road_secondary",
-  "road_tertiary",
-  "road_minor",
-  "road_service",
-  "road_path",
-  "road_pedestrian",
-  "road_track",
-  // Bridges
-  "bridge_motorway",
-  "bridge_trunk",
-  "bridge_primary",
-  "bridge_secondary",
-  "bridge_tertiary",
-  "bridge_minor",
-  "bridge_service",
+  ...ROAD_HIERARCHY.motorway,
+  ...ROAD_HIERARCHY.primary,
+  ...ROAD_HIERARCHY.secondary,
+  ...ROAD_HIERARCHY.tertiary,
+  ...ROAD_HIERARCHY.residential,
   // Casings
   "road_motorway_casing",
   "road_trunk_casing",
@@ -132,6 +149,8 @@ const CUSTOM_JSON_STYLES = [
   "desert-sand",
   "nordic-navy",
   "neon-city",
+  "japanese-ink",
+  "blueprint",
 ];
 
 // Apply a style configuration to the map
@@ -149,20 +168,27 @@ export function applyStyleToMap(map: MapLibreMap, styleId: string): void {
     setPaint(map, "background", "background-color", mapConfig.background);
   }
 
-  // Apply road colors
-  const roadColor = mapConfig.roadColor;
-  ROAD_LAYERS.forEach((layerId) => {
-    setPaint(map, layerId, "line-color", roadColor);
+  // Get road colors (handles both string and object formats)
+  const roadColors = getRoadColors(mapConfig.roads);
+  const roadWidths = { ...DEFAULT_ROAD_WIDTHS, ...mapConfig.roadWidths };
+
+  // Apply hierarchical road colors (MapToPoster approach)
+  Object.entries(ROAD_HIERARCHY).forEach(([level, layers]) => {
+    const color = roadColors[level as keyof typeof roadColors];
+    const width = roadWidths[level as keyof typeof roadWidths];
+    layers.forEach((layerId) => {
+      setPaint(map, layerId, "line-color", color);
+      setPaint(map, layerId, "line-width", width);
+    });
   });
 
-  // Make road casings darker version of road color or hide them
-  const casingColor = darkenColor(roadColor, 0.3);
+  // Make road casings match background (hide them)
   ROAD_CASING_LAYERS.forEach((layerId) => {
-    setPaint(map, layerId, "line-color", mapConfig.background || casingColor);
+    setPaint(map, layerId, "line-color", mapConfig.background);
   });
 
-  // Hide or style water - make it same as background for minimal look
-  const waterColor = mapConfig.background || "#0e0e0e";
+  // Apply water color (null = hide, string = color)
+  const waterColor = mapConfig.water === null ? mapConfig.background : (mapConfig.water || mapConfig.background);
   WATER_LAYERS.forEach((layerId) => {
     setPaint(map, layerId, "fill-color", waterColor);
   });
@@ -170,27 +196,32 @@ export function applyStyleToMap(map: MapLibreMap, styleId: string): void {
     setPaint(map, layerId, "line-color", waterColor);
   });
 
+  // Apply parks color (null = hide)
+  const parksColor = mapConfig.parks === null ? mapConfig.background : (mapConfig.parks || mapConfig.background);
+  const parksOpacity = mapConfig.parks === null ? 0 : 1;
+
   // Hide landcover - make same as background
   LANDCOVER_LAYERS.forEach((layerId) => {
-    setPaint(map, layerId, "fill-color", mapConfig.background || "#0e0e0e");
-    setPaint(map, layerId, "fill-opacity", 0);
+    setPaint(map, layerId, "fill-color", parksColor);
+    setPaint(map, layerId, "fill-opacity", parksOpacity);
   });
 
-  // Hide landuse
+  // Hide landuse (parks fall under this)
   LANDUSE_LAYERS.forEach((layerId) => {
-    setPaint(map, layerId, "fill-color", mapConfig.background || "#0e0e0e");
-    setPaint(map, layerId, "fill-opacity", 0);
+    setPaint(map, layerId, "fill-color", parksColor);
+    setPaint(map, layerId, "fill-opacity", parksOpacity);
   });
 
-  // Hide buildings or make them very subtle
-  const buildingColor = mapConfig.background || "#0e0e0e";
+  // Apply buildings color (null = hide)
+  const buildingColor = mapConfig.buildings === null ? mapConfig.background : (mapConfig.buildings || mapConfig.background);
+  const buildingOpacity = mapConfig.buildings === null ? 0 : 0.3;
   BUILDING_LAYERS.forEach((layerId) => {
     setPaint(map, layerId, "fill-color", buildingColor);
-    setPaint(map, layerId, "fill-opacity", 0);
+    setPaint(map, layerId, "fill-opacity", buildingOpacity);
   });
   BUILDING_3D_LAYERS.forEach((layerId) => {
     setPaint(map, layerId, "fill-extrusion-color", buildingColor);
-    setPaint(map, layerId, "fill-extrusion-opacity", 0);
+    setPaint(map, layerId, "fill-extrusion-opacity", buildingOpacity);
   });
 
   // Hide or show labels
@@ -225,7 +256,7 @@ export function applyStyleToMap(map: MapLibreMap, styleId: string): void {
 
   // Apply glow effect (using line-blur for glow simulation)
   if (mapConfig.glow && mapConfig.glowColor) {
-    ROAD_LAYERS.forEach((layerId) => {
+    Object.values(ROAD_HIERARCHY).flat().forEach((layerId) => {
       // Add blur for glow effect
       setPaint(map, layerId, "line-blur", mapConfig.glowIntensity ? mapConfig.glowIntensity * 10 : 3);
     });
@@ -246,9 +277,10 @@ export function getPalette(styleId: string): Record<string, string> | null {
   const config = getStyleConfig(styleId);
   if (!config) return null;
 
+  const roadColors = getRoadColors(config.map.roads);
   return {
     background: config.map.background || "#0e0e0e",
-    roadColor: config.map.roadColor,
+    roadColor: roadColors.primary, // Use primary as default for legacy compat
   };
 }
 

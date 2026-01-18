@@ -1,6 +1,6 @@
 {
   "version": 8,
-  "name": "Lavender Haze",
+  "name": "Noir",
   "sources": {
     "openmaptiles": {
       "type": "vector",
@@ -13,7 +13,7 @@
       "id": "background",
       "type": "background",
       "paint": {
-        "background-color": "#faf5ff"
+        "background-color": "#000000"
       }
     },
     {
@@ -22,8 +22,8 @@
       "source": "openmaptiles",
       "source-layer": "water",
       "paint": {
-        "fill-color": "#C4B8D8",
-        "fill-outline-color": "#B4A8C8"
+        "fill-color": "#0A0A0A",
+        "fill-outline-color": "#151515"
       }
     },
     {
@@ -32,8 +32,8 @@
       "source": "openmaptiles",
       "source-layer": "landcover",
       "paint": {
-        "fill-color": "#ede9fe",
-        "fill-opacity": 0.4
+        "fill-color": "#000000",
+        "fill-opacity": 0
       }
     },
     {
@@ -47,7 +47,7 @@
         "park"
       ],
       "paint": {
-        "fill-color": "#ede9fe",
+        "fill-color": "#111111",
         "fill-opacity": 0.5
       }
     },
@@ -65,8 +65,8 @@
         "track"
       ],
       "paint": {
-        "line-color": "#e9d5ff",
-        "line-width": 0.8,
+        "line-color": "#505050",
+        "line-width": 0.6,
         "line-opacity": 0.6
       }
     },
@@ -81,8 +81,8 @@
         "tertiary"
       ],
       "paint": {
-        "line-color": "#d8b4fe",
-        "line-width": 1.2,
+        "line-color": "#808080",
+        "line-width": 1,
         "line-opacity": 0.7
       }
     },
@@ -97,9 +97,9 @@
         "secondary"
       ],
       "paint": {
-        "line-color": "#c084fc",
-        "line-width": 1.8,
-        "line-opacity": 0.8
+        "line-color": "#B0B0B0",
+        "line-width": 1.5,
+        "line-opacity": 0.85
       }
     },
     {
@@ -113,9 +113,9 @@
         "primary"
       ],
       "paint": {
-        "line-color": "#a855f7",
-        "line-width": 2.2,
-        "line-opacity": 0.9
+        "line-color": "#E0E0E0",
+        "line-width": 2,
+        "line-opacity": 0.95
       }
     },
     {
@@ -130,7 +130,7 @@
         "trunk"
       ],
       "paint": {
-        "line-color": "#9333ea",
+        "line-color": "#FFFFFF",
         "line-width": 2.5,
         "line-opacity": 1
       }
@@ -141,7 +141,7 @@
       "source": "openmaptiles",
       "source-layer": "building",
       "paint": {
-        "fill-color": "#faf5ff",
+        "fill-color": "#000000",
         "fill-opacity": 0
       }
     },
@@ -152,7 +152,7 @@
       "source-layer": "building",
       "minzoom": 14,
       "paint": {
-        "fill-extrusion-color": "#9333ea",
+        "fill-extrusion-color": "#FFFFFF",
         "fill-extrusion-height": [
           "coalesce",
           [
@@ -258,12 +258,12 @@
           18
         ],
         "text-transform": "uppercase",
-        "text-letter-spacing": 0.1,
+        "text-letter-spacing": 0.15,
         "visibility": "none"
       },
       "paint": {
-        "text-color": "#5b21b6",
-        "text-halo-color": "#faf5ff",
+        "text-color": "#FFFFFF",
+        "text-halo-color": "#000000",
         "text-halo-width": 2
       }
     },
@@ -342,8 +342,8 @@
         "visibility": "none"
       },
       "paint": {
-        "text-color": "#6d28d9",
-        "text-halo-color": "#faf5ff",
+        "text-color": "#FFFFFF",
+        "text-halo-color": "#000000",
         "text-halo-width": 1
       }
     }
