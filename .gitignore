@@ -49,3 +49,6 @@ next-env.d.ts
 postgres_data/
 redis_data/
 minio_data/
+
+# Sentry Config File
+.env.sentry-build-plugin
