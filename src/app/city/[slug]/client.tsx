@@ -8,19 +8,22 @@ import { DevicePicker } from "@/components/devices/DevicePicker";
 import { GenerateButton } from "@/components/generation/GenerateButton";
 import { ShareButtons } from "@/components/sharing/ShareButtons";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { useAppStore } from "@/lib/store";
-import { City } from "@/lib/cities";
+import { City, getCityDisplayName } from "@/lib/cities";
 import { MapStyle } from "@/types";
 import {
   Palette,
-  Sparkles,
+  Smartphone,
   MapPin,
   Users,
   Clock,
   User,
   LogOut,
+  Download,
 } from "lucide-react";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { SignInModal } from "@/components/auth/SignInModal";
 import {
@@ -40,6 +43,7 @@ export function CityPageClient({ city, styles }: CityPageClientProps) {
   const { setLocation, setCityName } = useAppStore();
   const { authenticated, isLoading, user, signOut } = useAuth();
   const [signInOpen, setSignInOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Set initial location and city name
   useEffect(() => {
@@ -50,7 +54,7 @@ export function CityPageClient({ city, styles }: CityPageClientProps) {
       bearing: 0,
       pitch: 0,
     });
-    setCityName(city.name);
+    setCityName(city.name, city.shortName);
   }, [city, setLocation, setCityName]);
 
   const formatPopulation = (pop: number) => {
@@ -64,9 +68,9 @@ export function CityPageClient({ city, styles }: CityPageClientProps) {
   };
 
   return (
-    <main className="min-h-screen flex flex-col bg-background">
+    <main className="h-screen flex flex-col bg-background overflow-hidden">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md px-6 md:px-10">
+      <header className="shrink-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
         <div className="flex h-14 items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <Image
@@ -75,15 +79,10 @@ export function CityPageClient({ city, styles }: CityPageClientProps) {
               width={32}
               height={32}
             />
-            <span className="font-semibold">City Frame</span>
+            <span className="font-semibold hidden sm:block">City Frame</span>
           </Link>
 
           <div className="flex items-center gap-3">
-            <ShareButtons
-              url={`https://cityframe.app/city/${city.slug}`}
-              title={`${city.name} Wallpapers`}
-            />
-
             {!isLoading && (
               authenticated ? (
                 <DropdownMenu>
@@ -121,90 +120,119 @@ export function CityPageClient({ city, styles }: CityPageClientProps) {
       <SignInModal open={signInOpen} onOpenChange={setSignInOpen} />
 
       {/* City Hero */}
-      <section className="border-b bg-gradient-to-b from-muted/50 to-background px-6 md:px-10">
-        <div className="py-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <section className="shrink-0 border-b bg-gradient-to-b from-muted/50 to-background px-4 md:px-6">
+        <div className="py-12">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
             <div>
-              <div className="flex items-center gap-2 text-muted-foreground mb-2">
+              <div className="flex items-center gap-2 text-muted-foreground mb-1">
                 <MapPin className="w-4 h-4" />
+                <span className="text-sm font-medium">{getCityDisplayName(city)}</span>
+                <span className="text-sm">·</span>
                 <span className="text-sm">{city.country}</span>
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">
+              <h1 className="text-2xl md:text-3xl font-bold">
                 {city.name} Wallpapers
               </h1>
-              <p className="text-muted-foreground max-w-2xl">
-                {city.description}. Create stunning wallpapers from {city.name}
-                &apos;s unique street layout and landmarks.
+              <p className="text-muted-foreground text-sm mt-1 hidden md:block max-w-xl">
+                {city.description}
               </p>
             </div>
 
-            <div className="flex gap-4 text-sm">
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-muted-foreground" />
-                <span>{formatPopulation(city.population)} people</span>
+            <div className="flex items-center gap-4">
+              <div className="flex gap-4 text-sm">
+                <div className="flex items-center gap-1.5">
+                  <Users className="w-4 h-4 text-muted-foreground" />
+                  <span>{formatPopulation(city.population)}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-muted-foreground" />
+                  <span>{city.timezone.split("/").pop()}</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-muted-foreground" />
-                <span>{city.timezone.split("/").pop()}</span>
-              </div>
+              <ShareButtons
+                url={`https://cityframe.app/city/${city.slug}`}
+                title={`${city.name} Wallpapers`}
+              />
             </div>
           </div>
         </div>
       </section>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col lg:flex-row">
+      <div className="flex-1 flex flex-col md:flex-row relative min-h-0">
         {/* Map Area */}
-        <div className="flex-1 relative min-h-[50vh] lg:min-h-0">
+        <div className="flex-1 relative min-h-[40vh] md:min-h-0">
           <MapView />
         </div>
 
+        {/* Mobile Sidebar Overlay */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         {/* Sidebar */}
-        <aside className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l bg-card">
-          <div className="h-full flex flex-col">
-            <div className="flex-1 overflow-y-auto p-4 space-y-6">
+        <aside
+          className={cn(
+            "fixed md:static right-0 top-14 bottom-0 md:top-auto md:bottom-auto w-72 md:h-full bg-card border-l z-50 md:z-auto",
+            "transform transition-transform duration-300 ease-in-out",
+            "md:transform-none",
+            sidebarOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"
+          )}
+        >
+          <div className="h-full flex flex-col overflow-hidden">
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto p-3 space-y-6">
               {/* Style Section */}
-              <section>
-                <div className="flex items-center gap-2 mb-3">
-                  <Palette className="w-4 h-4 text-muted-foreground" />
-                  <h2 className="font-semibold">Style</h2>
+              <section className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <Palette className="w-3.5 h-3.5 text-muted-foreground" />
+                  <h2 className="text-sm font-semibold">Style</h2>
                 </div>
                 <StylePicker />
               </section>
 
               {/* Device Section */}
-              <section>
-                <div className="flex items-center gap-2 mb-3">
-                  <Sparkles className="w-4 h-4 text-muted-foreground" />
-                  <h2 className="font-semibold">Devices</h2>
+              <section className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <Smartphone className="w-3.5 h-3.5 text-muted-foreground" />
+                  <h2 className="text-sm font-semibold">Devices</h2>
                 </div>
                 <DevicePicker />
               </section>
             </div>
 
-            {/* Generate Button */}
-            <div className="p-4 border-t bg-card">
+            {/* Fixed Bottom */}
+            <div className="shrink-0 p-3 border-t bg-card">
               <GenerateButton />
             </div>
           </div>
         </aside>
-      </div>
 
-      {/* SEO Content */}
-      <section className="border-t bg-muted/30 px-6 md:px-10">
-        <div className="py-12">
-          <h2 className="text-2xl font-bold mb-4">
-            About {city.name} Wallpapers
-          </h2>
-          <p className="text-muted-foreground max-w-3xl">
-            Create beautiful, high-resolution wallpapers featuring the unique
-            street layout and geography of {city.name}, {city.country}.
-            Whether you&apos;re a local resident or just love the city,
-            City Frame lets you generate custom wallpapers that showcase{" "}
-            {city.name}&apos;s distinctive character.
-          </p>
+        {/* Mobile Bottom Bar (when sidebar is closed) */}
+        <div className="md:hidden fixed bottom-4 left-4 right-4 z-30">
+          {!sidebarOpen && (
+            <Card className="p-3 shadow-lg">
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setSidebarOpen(true)}
+                >
+                  <Palette className="w-4 h-4 mr-2" />
+                  Customize
+                </Button>
+                <Button className="flex-1" onClick={() => setSidebarOpen(true)}>
+                  <Download className="w-4 h-4 mr-2" />
+                  Generate
+                </Button>
+              </div>
+            </Card>
+          )}
         </div>
-      </section>
+      </div>
     </main>
   );
 }

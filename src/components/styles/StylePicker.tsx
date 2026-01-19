@@ -25,7 +25,7 @@ export function StylePicker() {
 
   return (
     <>
-      <div className="flex gap-1.5 overflow-x-auto py-1 -mx-3 px-3 scrollbar-hide">
+      <div className="flex gap-2 overflow-x-auto py-1 -mx-3 px-3 scrollbar-hide">
         {MAP_STYLES.map((style) => {
           const isSelected = selectedStyle === style.id;
           const isLocked = isProStyle(style.id) && !isPro;
@@ -35,7 +35,7 @@ export function StylePicker() {
               key={style.id}
               onClick={() => handleStyleClick(style.id)}
               className={cn(
-                "group relative flex-shrink-0 w-20 p-1.5 rounded-lg border-2 transition-all duration-200",
+                "group relative flex-shrink-0 w-[72px] md:w-24 p-1.5 md:p-2 rounded-lg border-2 transition-all duration-200",
                 isSelected
                   ? "border-primary ring-2 ring-primary/20 scale-[1.02]"
                   : "border-transparent hover:border-muted-foreground/20 hover:scale-[1.01]",
@@ -43,7 +43,7 @@ export function StylePicker() {
               )}
             >
               {/* Style Preview with Thumbnail */}
-              <div className="aspect-[3/4] rounded-md mb-1 overflow-hidden bg-secondary relative">
+              <div className="aspect-[3/4] rounded-md mb-1.5 overflow-hidden bg-secondary relative">
                 <Image
                   src={`/styles/${style.id}.png`}
                   alt={style.name}
@@ -57,7 +57,7 @@ export function StylePicker() {
               </div>
 
               {/* Label */}
-              <div className="text-[9px] font-medium truncate text-center">{style.name}</div>
+              <div className="text-[10px] md:text-xs font-medium truncate text-center">{style.name}</div>
 
               {/* Selected indicator */}
               {isSelected && (

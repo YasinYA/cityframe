@@ -14,7 +14,8 @@ interface AppState {
 
   // City name state
   cityName: string | null;
-  setCityName: (name: string | null) => void;
+  cityShortName: string | null;
+  setCityName: (name: string | null, shortName?: string | null) => void;
   showCityCard: boolean;
   setShowCityCard: (show: boolean) => void;
 
@@ -85,7 +86,8 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   // City name state
   cityName: "New York",
-  setCityName: (name) => set({ cityName: name, showCityCard: name !== null }),
+  cityShortName: "NYC",
+  setCityName: (name, shortName) => set({ cityName: name, cityShortName: shortName || name, showCityCard: name !== null }),
   showCityCard: true,
   setShowCityCard: (show) => set({ showCityCard: show }),
 
@@ -154,8 +156,9 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   // Capture map canvas as base64 PNG
   captureMapCanvas: async () => {
-    const { mapInstance, showLocationTag, cityName, selectedStyle, showVignette, vignetteSize } = get();
-    console.log("Capturing map, instance:", !!mapInstance, "showLocationTag:", showLocationTag, "cityName:", cityName, "showVignette:", showVignette);
+    const { mapInstance, showLocationTag, cityName, cityShortName, selectedStyle, showVignette, vignetteSize } = get();
+    const displayName = cityShortName || cityName;
+    console.log("Capturing map, instance:", !!mapInstance, "showLocationTag:", showLocationTag, "displayName:", displayName, "showVignette:", showVignette);
 
     if (!mapInstance) {
       console.error("Map instance not available");
@@ -195,7 +198,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         const isLightTheme = luminance > 0.5;
 
         // Check if we need to composite any overlays
-        const needsComposite = showVignette || (showLocationTag && cityName);
+        const needsComposite = showVignette || (showLocationTag && displayName);
         console.log("needsComposite:", needsComposite, "will draw location tag:", showLocationTag && !!cityName);
 
         if (needsComposite) {
@@ -261,7 +264,7 @@ export const useAppStore = create<AppState>((set, get) => ({
           }
 
           // Draw location tag at bottom center (positioned at 82% height to survive cropping)
-          if (showLocationTag && cityName) {
+          if (showLocationTag && displayName) {
             // Scale tag size based on canvas size for consistent appearance
             const scaleFactor = Math.min(compositeCanvas.width, compositeCanvas.height) / 800;
             const tagPadding = Math.round(24 * scaleFactor);
@@ -271,7 +274,7 @@ export const useAppStore = create<AppState>((set, get) => ({
             const iconGap = Math.round(16 * scaleFactor);
 
             ctx.font = `600 ${fontSize}px system-ui, -apple-system, sans-serif`;
-            const textWidth = ctx.measureText(cityName).width;
+            const textWidth = ctx.measureText(displayName).width;
             const tagWidth = iconSize + iconGap + textWidth + tagPadding * 2;
 
             const tagX = (compositeCanvas.width - tagWidth) / 2;
@@ -324,7 +327,7 @@ export const useAppStore = create<AppState>((set, get) => ({
 
             ctx.fillStyle = isLightTheme ? "#1a1a1a" : "#ffffff";
             ctx.font = `600 ${fontSize}px system-ui, -apple-system, sans-serif`;
-            ctx.fillText(cityName, textX, textY);
+            ctx.fillText(displayName, textX, textY);
           }
 
           const dataUrl = compositeCanvas.toDataURL("image/png");

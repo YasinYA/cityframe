@@ -5,9 +5,11 @@ import { useAppStore } from "@/lib/store";
 import { getStyleConfig, getRoadColors } from "@/lib/map/styles";
 
 export function CityNameCard() {
-  const { cityName, showCityCard, selectedStyle } = useAppStore();
+  const { cityName, cityShortName, showCityCard, selectedStyle } = useAppStore();
 
   if (!showCityCard || !cityName) return null;
+
+  const displayName = cityShortName || cityName;
 
   // Get theme colors
   const themeConfig = getStyleConfig(selectedStyle);
@@ -54,7 +56,7 @@ export function CityNameCard() {
             color: isLightTheme ? "#1a1a1a" : "#ffffff",
           }}
         >
-          {cityName}
+          {displayName}
         </span>
       </div>
     </div>

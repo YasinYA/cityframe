@@ -85,6 +85,32 @@ export function GenerateButton() {
             </DialogHeader>
 
             <div className="space-y-3 py-4">
+              {/* Preview Card */}
+              {generatedImages.length > 0 && (
+                <div className="flex justify-center gap-3 p-4 bg-secondary/30 rounded-lg">
+                  {generatedImages.map((img) => {
+                    const preset =
+                      DEVICE_PRESETS[img.device as keyof typeof DEVICE_PRESETS];
+                    const isPortrait = preset ? preset.height > preset.width : true;
+                    return (
+                      <div
+                        key={`preview-${img.device}`}
+                        className={cn(
+                          "rounded-lg overflow-hidden shadow-lg bg-black",
+                          isPortrait ? "h-48 w-auto" : "w-48 h-auto"
+                        )}
+                      >
+                        <img
+                          src={img.url}
+                          alt={`${preset?.name || img.device} preview`}
+                          className="h-full w-full object-contain"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
               {generatedImages.length > 1 && (
                 <Button
                   className="w-full gap-2"

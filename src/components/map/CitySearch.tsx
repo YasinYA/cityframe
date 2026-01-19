@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useAppStore } from "@/lib/store";
+import { CITIES } from "@/lib/cities";
 
 // Using Nominatim (OpenStreetMap) - free geocoding, no API key required!
 interface NominatimResult {
@@ -86,7 +87,13 @@ export function CitySearch({ onSelect }: CitySearchProps) {
     const cityName = result.place_name.split(",")[0];
     onSelect(lat, lng);
     setQuery(cityName);
-    setCityName(cityName);
+
+    // Look up the city in our database to get the shortName
+    const knownCity = CITIES.find(
+      (c) => c.name.toLowerCase() === cityName.toLowerCase()
+    );
+    setCityName(cityName, knownCity?.shortName);
+
     setResults([]);
     setIsOpen(false);
   };

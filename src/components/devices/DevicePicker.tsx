@@ -35,7 +35,7 @@ export function DevicePicker() {
 
   return (
     <>
-      <div className="flex gap-1.5 overflow-x-auto py-1 -mx-3 px-3 scrollbar-hide">
+      <div className="flex gap-2 overflow-x-auto py-1 -mx-3 px-3 scrollbar-hide">
         {devices.map((device) => {
           const isSelected = selectedDevices.includes(device.id);
           const isLocked = isProDevice(device.id) && !isPro;
@@ -45,7 +45,7 @@ export function DevicePicker() {
               key={device.id}
               onClick={() => handleDeviceClick(device.id)}
               className={cn(
-                "group relative flex-shrink-0 w-20 p-1.5 rounded-lg border-2 transition-all duration-200",
+                "group relative flex-shrink-0 w-[72px] md:w-24 p-1.5 md:p-2 rounded-lg border-2 transition-all duration-200",
                 isSelected
                   ? "border-primary ring-2 ring-primary/20 scale-[1.02]"
                   : "border-transparent hover:border-muted-foreground/20 hover:scale-[1.01]",
@@ -55,7 +55,7 @@ export function DevicePicker() {
               {/* Preview */}
               <div
                 className={cn(
-                  "aspect-[3/4] rounded-md mb-1 flex items-center justify-center overflow-hidden",
+                  "aspect-[3/4] rounded-md mb-1.5 flex items-center justify-center overflow-hidden",
                   isSelected
                     ? "bg-primary text-primary-foreground"
                     : "bg-secondary text-muted-foreground"
@@ -72,7 +72,7 @@ export function DevicePicker() {
               </div>
 
               {/* Label */}
-              <div className="text-[9px] font-medium truncate text-center">{device.name}</div>
+              <div className="text-[10px] md:text-xs font-medium truncate text-center">{device.name}</div>
 
               {/* Selected indicator */}
               {isSelected && (
