@@ -40,6 +40,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const description = `Download a stunning ${style.name} style wallpaper of ${city.name}, ${city.country}. ${style.description}. Perfect for phone, tablet, and desktop.`;
   const url = `https://cityframe.app/city/${city.slug}/${style.id}`;
 
+  // Use the style's thumbnail as OG image
+  const ogImage = `https://cityframe.app/styles/${style.id}.png`;
+
   return {
     title,
     description,
@@ -59,7 +62,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: "website",
       images: [
         {
-          url: `/api/og?city=${city.slug}&style=${style.id}`,
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: `${city.name} ${style.name} Wallpaper`,
@@ -70,7 +73,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       card: "summary_large_image",
       title,
       description,
-      images: [`/api/og?city=${city.slug}&style=${style.id}`],
+      images: [ogImage],
     },
     alternates: {
       canonical: url,
@@ -83,13 +86,14 @@ function generateJsonLd(
   city: NonNullable<ReturnType<typeof getCityBySlug>>,
   style: NonNullable<ReturnType<typeof getStyleById>>
 ) {
+  const ogImage = `https://cityframe.app/styles/${style.id}.png`;
   return {
     "@context": "https://schema.org",
     "@type": "ImageObject",
     name: `${city.name} ${style.name} Wallpaper`,
     description: `${style.name} style wallpaper of ${city.name}, ${city.country}`,
-    contentUrl: `https://cityframe.app/api/og?city=${city.slug}&style=${style.id}`,
-    thumbnailUrl: `https://cityframe.app/api/og?city=${city.slug}&style=${style.id}`,
+    contentUrl: ogImage,
+    thumbnailUrl: ogImage,
     creator: {
       "@type": "Organization",
       name: "City Frame",

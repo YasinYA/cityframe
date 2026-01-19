@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getCityBySlug, CITIES } from "@/lib/cities";
+import { getCityBySlug, CITIES, getCityOgStyle } from "@/lib/cities";
 import { MAP_STYLES } from "@/lib/map/styles";
 import { CityPageClient } from "./client";
 
@@ -30,6 +30,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const description = `Create stunning ${city.name}, ${city.country} wallpapers for your phone, tablet, and desktop. ${city.description}. Download high-resolution map wallpapers instantly.`;
   const url = `https://cityframe.app/city/${city.slug}`;
 
+  // Get OG image from style thumbnail if available
+  const ogStyle = getCityOgStyle(city.slug);
+  const ogImage = ogStyle
+    ? `https://cityframe.app/styles/${ogStyle}.png`
+    : `https://cityframe.app/styles/midnight-gold.png`; // default fallback
+
   return {
     title,
     description,
@@ -51,7 +57,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: "website",
       images: [
         {
-          url: `/api/og?city=${city.slug}`,
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: `${city.name} Map Wallpaper`,
@@ -62,7 +68,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       card: "summary_large_image",
       title,
       description,
-      images: [`/api/og?city=${city.slug}`],
+      images: [ogImage],
     },
     alternates: {
       canonical: url,

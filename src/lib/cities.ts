@@ -141,3 +141,111 @@ export function searchCities(query: string): City[] {
 export function getCityDisplayName(city: City): string {
   return city.shortName || city.name;
 }
+
+// City to style mapping for OG images (top cities matched with fitting styles)
+export const CITY_OG_STYLES: Record<string, string> = {
+  // North America
+  "new-york": "midnight-gold",
+  "los-angeles": "sunset-vibrant",
+  "chicago": "copper-industrial",
+  "houston": "slate-minimal",
+  "phoenix": "desert-sand",
+  "san-francisco": "deep-ocean",
+  "seattle": "forest-night",
+  "miami": "neon-city",
+  "boston": "autumn",
+  "toronto": "arctic-frost",
+  "vancouver": "forest-night",
+  "mexico-city": "terracotta",
+  "las-vegas": "neon-city",
+  "san-diego": "deep-ocean",
+  "denver": "slate-minimal",
+  "portland": "sage-minimalist",
+  "austin": "sunset-vibrant",
+  "nashville": "warm-beige",
+  "new-orleans": "rose-noir",
+  "montreal": "nordic-navy",
+
+  // Europe
+  "london": "noir",
+  "paris": "rose-noir",
+  "berlin": "blueprint",
+  "rome": "terracotta",
+  "madrid": "sunset-vibrant",
+  "barcelona": "terracotta",
+  "amsterdam": "deep-ocean",
+  "vienna": "midnight-gold",
+  "prague": "autumn",
+  "lisbon": "pastel-dream",
+  "dublin": "forest-night",
+  "stockholm": "nordic-navy",
+  "copenhagen": "arctic-frost",
+  "oslo": "arctic-frost",
+  "helsinki": "arctic-frost",
+  "zurich": "slate-minimal",
+  "munich": "copper-industrial",
+  "brussels": "warm-beige",
+  "budapest": "midnight-gold",
+  "warsaw": "slate-minimal",
+  "athens": "terracotta",
+  "moscow": "noir",
+  "istanbul": "rose-noir",
+  "florence": "terracotta",
+  "venice": "deep-ocean",
+  "edinburgh": "forest-night",
+  "milan": "slate-minimal",
+  "nice": "lavender-haze",
+  "reykjavik": "arctic-frost",
+
+  // Asia
+  "tokyo": "neon-city",
+  "osaka": "cherry-blossom",
+  "kyoto": "japanese-ink",
+  "seoul": "neon-city",
+  "beijing": "rose-noir",
+  "shanghai": "midnight-gold",
+  "hong-kong": "neon-city",
+  "singapore": "deep-ocean",
+  "bangkok": "sunset-vibrant",
+  "mumbai": "terracotta",
+  "delhi": "desert-sand",
+  "dubai": "midnight-gold",
+  "abu-dhabi": "desert-sand",
+  "tel-aviv": "deep-ocean",
+  "kuala-lumpur": "forest-night",
+  "taipei": "neon-city",
+  "manila": "sunset-vibrant",
+  "jakarta": "warm-beige",
+  "ho-chi-minh-city": "sunset-vibrant",
+  "hanoi": "japanese-ink",
+  "bali": "forest-night",
+
+  // Oceania
+  "sydney": "deep-ocean",
+  "melbourne": "slate-minimal",
+  "brisbane": "sunset-vibrant",
+  "auckland": "deep-ocean",
+
+  // South America
+  "sao-paulo": "copper-industrial",
+  "rio-de-janeiro": "sunset-vibrant",
+  "buenos-aires": "noir",
+  "lima": "terracotta",
+  "bogota": "forest-night",
+  "santiago": "slate-minimal",
+  "medellin": "sage-minimalist",
+  "cartagena": "terracotta",
+
+  // Africa
+  "cairo": "desert-sand",
+  "cape-town": "deep-ocean",
+  "johannesburg": "midnight-gold",
+  "marrakech": "desert-sand",
+  "casablanca": "warm-beige",
+  "nairobi": "sage-minimalist",
+  "lagos": "sunset-vibrant",
+};
+
+export function getCityOgStyle(slug: string): string | undefined {
+  return CITY_OG_STYLES[slug];
+}
