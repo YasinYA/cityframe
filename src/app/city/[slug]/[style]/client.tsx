@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { MapView } from "@/components/map/MapView";
 import { DevicePicker } from "@/components/devices/DevicePicker";
@@ -12,9 +12,18 @@ import { useAppStore } from "@/lib/store";
 import { City } from "@/lib/cities";
 import { STYLE_GRADIENTS, STYLE_ICONS } from "@/lib/map/styles";
 import { MapStyle } from "@/types";
-import { ArrowLeft, MapPin, Sparkles, Check } from "lucide-react";
+import { MapPin, Sparkles, Check, User, LogOut } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
+import { SignInModal } from "@/components/auth/SignInModal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface CityStylePageClientProps {
   city: City;
@@ -27,9 +36,11 @@ export function CityStylePageClient({
   style,
   allStyles,
 }: CityStylePageClientProps) {
-  const { setLocation, setSelectedStyle, selectedStyle } = useAppStore();
+  const { setLocation, setSelectedStyle, selectedStyle, setCityName } = useAppStore();
+  const { authenticated, isLoading, user, signOut } = useAuth();
+  const [signInOpen, setSignInOpen] = useState(false);
 
-  // Set initial location and style
+  // Set initial location, style, and city name
   useEffect(() => {
     setLocation({
       lat: city.lat,
@@ -39,7 +50,8 @@ export function CityStylePageClient({
       pitch: 0,
     });
     setSelectedStyle(style.id);
-  }, [city, style, setLocation, setSelectedStyle]);
+    setCityName(city.name);
+  }, [city, style, setLocation, setSelectedStyle, setCityName]);
 
   const gradient = STYLE_GRADIENTS[style.id] || "from-gray-200 to-gray-300";
   const icon = STYLE_ICONS[style.id] || "◉";
@@ -47,30 +59,60 @@ export function CityStylePageClient({
   return (
     <main className="min-h-screen flex flex-col bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-4">
-            <Link href={`/city/${city.slug}`}>
-              <Button variant="ghost" size="icon">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-            </Link>
+      <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md">
+        <div className="container flex h-14 items-center justify-between px-4 max-w-6xl mx-auto">
+          <Link href="/" className="flex items-center gap-2">
             <Image
               src="/logo.webp"
               alt="City Frame"
-              width={48}
-              height={48}
-              className="rounded-lg"
+              width={32}
+              height={32}
             />
-          </div>
+            <span className="font-semibold">City Frame</span>
+          </Link>
 
-          <ShareButtons
-            url={`https://cityframe.app/city/${city.slug}/${style.id}`}
-            title={`${city.name} ${style.name} Wallpaper`}
-            description={`Create a stunning ${style.name} wallpaper of ${city.name}`}
-          />
+          <div className="flex items-center gap-3">
+            <ShareButtons
+              url={`https://cityframe.app/city/${city.slug}/${style.id}`}
+              title={`${city.name} ${style.name} Wallpaper`}
+              description={`Create a stunning ${style.name} wallpaper of ${city.name}`}
+            />
+
+            {!isLoading && (
+              authenticated ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
+                        <User className="w-4 h-4 text-primary" />
+                      </div>
+                      <span className="hidden sm:inline text-sm max-w-[120px] truncate">
+                        {user?.email}
+                      </span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+                      {user?.email}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => signOut()} className="text-red-600">
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Sign out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button size="sm" variant="outline" onClick={() => setSignInOpen(true)}>
+                  Sign In
+                </Button>
+              )
+            )}
+          </div>
         </div>
       </header>
+
+      <SignInModal open={signInOpen} onOpenChange={setSignInOpen} />
 
       {/* Style Hero */}
       <section className="border-b">

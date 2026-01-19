@@ -11,12 +11,15 @@ import { useAppStore } from "@/lib/store";
 import { getStyleById, getStyleConfig } from "@/lib/map/styles";
 import { applyStyleToMap, setLabelsVisibility } from "@/lib/map/palettes";
 import { MapLocation } from "@/types";
+import { useAuth } from "@/hooks/useAuth";
 
 // No API key required with OpenFreeMap!
 
 export default function MapViewClient() {
   const mapRef = useRef<MapRef>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const { location, setLocation, selectedStyle, showLabels, toggleLabels, setMapInstance, showLocationTag, toggleLocationTag, showVignette, toggleVignette, vignetteSize, setVignetteSize } = useAppStore();
+  const { authenticated } = useAuth();
   const showLabelsRef = useRef(showLabels);
 
   // Keep ref in sync with state
@@ -174,8 +177,44 @@ export default function MapViewClient() {
     };
   }, [setMapInstance]);
 
+  // Screenshot protection for non-authenticated users
+  useEffect(() => {
+    if (authenticated) return;
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Prevent right-click context menu
+    const handleContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+      return false;
+    };
+
+    // Prevent drag start
+    const handleDragStart = (e: DragEvent) => {
+      e.preventDefault();
+      return false;
+    };
+
+    container.addEventListener("contextmenu", handleContextMenu);
+    container.addEventListener("dragstart", handleDragStart);
+
+    return () => {
+      container.removeEventListener("contextmenu", handleContextMenu);
+      container.removeEventListener("dragstart", handleDragStart);
+    };
+  }, [authenticated]);
+
   return (
-    <div className="relative w-full h-full">
+    <div
+      ref={containerRef}
+      className="relative w-full h-full"
+      style={!authenticated ? {
+        userSelect: "none",
+        WebkitUserSelect: "none",
+        WebkitTouchCallout: "none",
+      } : undefined}
+    >
       <MapGL
         ref={mapRef}
         {...viewState}
@@ -287,6 +326,70 @@ export default function MapViewClient() {
               background: `radial-gradient(ellipse at center, transparent ${100 - vignetteSize * 2}%, ${vignetteColor}80 100%)`
             }}
           />
+        </div>
+      )}
+
+      {/* Watermark Overlay for non-authenticated users */}
+      {!authenticated && (
+        <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
+          {/* Repeating diagonal watermark pattern */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `repeating-linear-gradient(
+                -45deg,
+                transparent,
+                transparent 100px,
+                rgba(128, 128, 128, 0.03) 100px,
+                rgba(128, 128, 128, 0.03) 200px
+              )`,
+            }}
+          />
+          {/* Center watermark */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div
+              className="text-6xl font-bold text-foreground/[0.07] tracking-widest select-none"
+              style={{
+                transform: "rotate(-30deg)",
+                textShadow: "0 0 20px rgba(0,0,0,0.1)",
+              }}
+            >
+              PREVIEW
+            </div>
+          </div>
+          {/* Multiple smaller watermarks */}
+          <div className="absolute top-[15%] left-[10%]">
+            <div
+              className="text-2xl font-semibold text-foreground/[0.05] tracking-wider select-none"
+              style={{ transform: "rotate(-30deg)" }}
+            >
+              cityframe.app
+            </div>
+          </div>
+          <div className="absolute top-[15%] right-[10%]">
+            <div
+              className="text-2xl font-semibold text-foreground/[0.05] tracking-wider select-none"
+              style={{ transform: "rotate(-30deg)" }}
+            >
+              cityframe.app
+            </div>
+          </div>
+          <div className="absolute bottom-[20%] left-[15%]">
+            <div
+              className="text-2xl font-semibold text-foreground/[0.05] tracking-wider select-none"
+              style={{ transform: "rotate(-30deg)" }}
+            >
+              cityframe.app
+            </div>
+          </div>
+          <div className="absolute bottom-[20%] right-[15%]">
+            <div
+              className="text-2xl font-semibold text-foreground/[0.05] tracking-wider select-none"
+              style={{ transform: "rotate(-30deg)" }}
+            >
+              cityframe.app
+            </div>
+          </div>
         </div>
       )}
 

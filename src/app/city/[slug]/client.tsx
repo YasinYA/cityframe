@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { MapView } from "@/components/map/MapView";
 import { StylePicker } from "@/components/styles/StylePicker";
@@ -8,21 +8,28 @@ import { DevicePicker } from "@/components/devices/DevicePicker";
 import { GenerateButton } from "@/components/generation/GenerateButton";
 import { ShareButtons } from "@/components/sharing/ShareButtons";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { useAppStore } from "@/lib/store";
 import { City } from "@/lib/cities";
-import { STYLE_GRADIENTS, STYLE_ICONS } from "@/lib/map/styles";
 import { MapStyle } from "@/types";
 import {
   Palette,
   Sparkles,
-  ArrowLeft,
   MapPin,
   Users,
   Clock,
+  User,
+  LogOut,
 } from "lucide-react";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
+import { SignInModal } from "@/components/auth/SignInModal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface CityPageClientProps {
   city: City;
@@ -30,9 +37,11 @@ interface CityPageClientProps {
 }
 
 export function CityPageClient({ city, styles }: CityPageClientProps) {
-  const { setLocation, selectedStyle, setSelectedStyle } = useAppStore();
+  const { setLocation, setCityName } = useAppStore();
+  const { authenticated, isLoading, user, signOut } = useAuth();
+  const [signInOpen, setSignInOpen] = useState(false);
 
-  // Set initial location to city coordinates
+  // Set initial location and city name
   useEffect(() => {
     setLocation({
       lat: city.lat,
@@ -41,7 +50,8 @@ export function CityPageClient({ city, styles }: CityPageClientProps) {
       bearing: 0,
       pitch: 0,
     });
-  }, [city, setLocation]);
+    setCityName(city.name);
+  }, [city, setLocation, setCityName]);
 
   const formatPopulation = (pop: number) => {
     if (pop >= 1000000) {
@@ -56,33 +66,63 @@ export function CityPageClient({ city, styles }: CityPageClientProps) {
   return (
     <main className="min-h-screen flex flex-col bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <Button variant="ghost" size="icon">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-            </Link>
+      <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md px-6 md:px-10">
+        <div className="flex h-14 items-center justify-between">
+          <Link href="/" className="flex items-center gap-2">
             <Image
               src="/logo.webp"
               alt="City Frame"
-              width={48}
-              height={48}
-              className="rounded-lg"
+              width={32}
+              height={32}
             />
-          </div>
+            <span className="font-semibold">City Frame</span>
+          </Link>
 
-          <ShareButtons
-            url={`https://cityframe.app/city/${city.slug}`}
-            title={`${city.name} Wallpapers`}
-          />
+          <div className="flex items-center gap-3">
+            <ShareButtons
+              url={`https://cityframe.app/city/${city.slug}`}
+              title={`${city.name} Wallpapers`}
+            />
+
+            {!isLoading && (
+              authenticated ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
+                        <User className="w-4 h-4 text-primary" />
+                      </div>
+                      <span className="hidden sm:inline text-sm max-w-[120px] truncate">
+                        {user?.email}
+                      </span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+                      {user?.email}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => signOut()} className="text-red-600">
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Sign out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button size="sm" variant="outline" onClick={() => setSignInOpen(true)}>
+                  Sign In
+                </Button>
+              )
+            )}
+          </div>
         </div>
       </header>
 
+      <SignInModal open={signInOpen} onOpenChange={setSignInOpen} />
+
       {/* City Hero */}
-      <section className="border-b bg-gradient-to-b from-muted/50 to-background">
-        <div className="container px-4 py-8">
+      <section className="border-b bg-gradient-to-b from-muted/50 to-background px-6 md:px-10">
+        <div className="py-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 text-muted-foreground mb-2">
@@ -107,64 +147,6 @@ export function CityPageClient({ city, styles }: CityPageClientProps) {
                 <Clock className="w-4 h-4 text-muted-foreground" />
                 <span>{city.timezone.split("/").pop()}</span>
               </div>
-            </div>
-          </div>
-
-          {/* Quick Style Selection */}
-          <div className="mt-6">
-            <h2 className="text-sm font-medium text-muted-foreground mb-3">
-              Quick Styles
-            </h2>
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {styles.map((style) => {
-                const isSelected = selectedStyle === style.id;
-                const gradient =
-                  STYLE_GRADIENTS[style.id] || "from-gray-200 to-gray-300";
-                const icon = STYLE_ICONS[style.id] || "◉";
-
-                return (
-                  <Link
-                    key={style.id}
-                    href={`/city/${city.slug}/${style.id}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setSelectedStyle(style.id);
-                    }}
-                  >
-                    <Card
-                      className={cn(
-                        "flex-shrink-0 w-24 p-2 cursor-pointer transition-all",
-                        isSelected
-                          ? "ring-2 ring-primary"
-                          : "hover:ring-1 hover:ring-muted-foreground/20"
-                      )}
-                    >
-                      <div
-                        className={cn(
-                          "aspect-square rounded-md mb-1 flex items-center justify-center bg-gradient-to-br",
-                          gradient
-                        )}
-                      >
-                        <span
-                          className={cn(
-                            "text-xl",
-                            style.id === "dark-mode" ||
-                              style.id === "neon-cyber" ||
-                              style.id === "satellite"
-                              ? "text-white/80"
-                              : "text-gray-600/80"
-                          )}
-                        >
-                          {icon}
-                        </span>
-                      </div>
-                      <div className="text-xs font-medium truncate text-center">
-                        {style.name}
-                      </div>
-                    </Card>
-                  </Link>
-                );
-              })}
             </div>
           </div>
         </div>
@@ -209,40 +191,18 @@ export function CityPageClient({ city, styles }: CityPageClientProps) {
       </div>
 
       {/* SEO Content */}
-      <section className="border-t bg-muted/30">
-        <div className="container px-4 py-12">
+      <section className="border-t bg-muted/30 px-6 md:px-10">
+        <div className="py-12">
           <h2 className="text-2xl font-bold mb-4">
             About {city.name} Wallpapers
           </h2>
-          <div className="prose prose-gray max-w-none">
-            <p>
-              Create beautiful, high-resolution wallpapers featuring the unique
-              street layout and geography of {city.name}, {city.country}.
-              Whether you&apos;re a local resident or just love the city,
-              City Frame lets you generate custom wallpapers that showcase{" "}
-              {city.name}&apos;s distinctive character.
-            </p>
-            <h3>Available Styles</h3>
-            <ul>
-              {styles.map((style) => (
-                <li key={style.id}>
-                  <strong>{style.name}</strong>: {style.description}
-                </li>
-              ))}
-            </ul>
-            <h3>Device Compatibility</h3>
-            <p>
-              Our wallpapers are available in multiple resolutions to fit any
-              device perfectly:
-            </p>
-            <ul>
-              <li>iPhone (1170×2532) - Perfect for iPhone 12, 13, 14 Pro</li>
-              <li>Android (1440×3200) - Fits most Android flagships</li>
-              <li>Tablet (2048×2732) - Optimized for iPad Pro</li>
-              <li>Desktop (3840×2160) - 4K resolution for monitors</li>
-              <li>Ultra-wide (5120×1440) - For 32:9 ultra-wide displays</li>
-            </ul>
-          </div>
+          <p className="text-muted-foreground max-w-3xl">
+            Create beautiful, high-resolution wallpapers featuring the unique
+            street layout and geography of {city.name}, {city.country}.
+            Whether you&apos;re a local resident or just love the city,
+            City Frame lets you generate custom wallpapers that showcase{" "}
+            {city.name}&apos;s distinctive character.
+          </p>
         </div>
       </section>
     </main>

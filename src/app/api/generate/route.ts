@@ -4,6 +4,7 @@ import { db } from "@/lib/db/client";
 import { jobs } from "@/lib/db/schema";
 import { addGenerationJob } from "@/lib/queue/bullmq";
 import { MapLocation, DeviceType, AIOptions } from "@/types";
+import { SESSION_COOKIE_NAME } from "@/lib/auth/config";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,15 @@ interface GenerateRequestBody {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication - require sign-in to generate
+    const sessionEmail = request.cookies.get(SESSION_COOKIE_NAME)?.value;
+    if (!sessionEmail) {
+      return NextResponse.json(
+        { error: "Authentication required. Please sign in to generate wallpapers." },
+        { status: 401 }
+      );
+    }
+
     const body: GenerateRequestBody = await request.json();
     const { location, style, devices, ai } = body;
 

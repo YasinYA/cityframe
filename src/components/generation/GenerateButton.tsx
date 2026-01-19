@@ -17,9 +17,12 @@ import {
   AlertCircle,
   Sparkles,
   RefreshCw,
+  Lock,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
+import { SignInModal } from "@/components/auth/SignInModal";
 
 export function GenerateButton() {
   const {
@@ -34,7 +37,9 @@ export function GenerateButton() {
     mapInstance,
   } = useAppStore();
 
+  const { authenticated, isLoading: authLoading } = useAuth();
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const handleDownload = (url: string, device: string) => {
     const link = document.createElement("a");
@@ -203,7 +208,40 @@ export function GenerateButton() {
     );
   }
 
-  // Default state
+  // Auth loading state
+  if (authLoading) {
+    return (
+      <Button className="w-full gap-2" disabled>
+        <Loader2 className="w-4 h-4 animate-spin" />
+        Loading...
+      </Button>
+    );
+  }
+
+  // Not authenticated - show sign in prompt
+  if (!authenticated) {
+    return (
+      <>
+        <Button
+          className="w-full gap-2"
+          variant="default"
+          onClick={() => setShowAuthModal(true)}
+        >
+          <Lock className="w-4 h-4" />
+          Sign in to Generate
+        </Button>
+        <p className="text-xs text-muted-foreground text-center mt-2">
+          Free preview. Sign in to download wallpapers.
+        </p>
+        <SignInModal
+          open={showAuthModal}
+          onOpenChange={setShowAuthModal}
+        />
+      </>
+    );
+  }
+
+  // Default state - authenticated
   return (
     <Button className="w-full gap-2" onClick={handleGenerate}>
       <Sparkles className="w-4 h-4" />
