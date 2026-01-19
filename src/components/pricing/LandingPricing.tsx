@@ -59,9 +59,9 @@ export function LandingPricing() {
           transition={{ duration: 0.5 }}
           className="text-center mb-14"
         >
-          <h2 className="text-3xl font-bold mb-3">Simple pricing</h2>
+          <h2 className="text-3xl font-bold mb-3">One price. Yours forever.</h2>
           <p className="text-lg text-muted-foreground">
-            One payment. Lifetime access. No subscriptions.
+            A single payment for lifetime access. No subscriptions. No upsells.
           </p>
         </motion.div>
 
@@ -112,10 +112,14 @@ export function LandingPricing() {
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Button className="w-full gap-2">
                   <Zap className="w-4 h-4" />
-                  Get Access{price ? ` - ${formatPrice(price.amount, price.currency)}` : ""}
+                  Get lifetime access{price ? ` - ${formatPrice(price.amount, price.currency)}` : ""}
                 </Button>
               </motion.div>
             </Link>
+
+            <p className="text-xs text-muted-foreground text-center mt-4">
+              Personal use license. See terms for details.
+            </p>
           </Card>
         </motion.div>
 

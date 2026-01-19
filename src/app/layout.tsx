@@ -1,10 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import { Toaster } from "sonner";
 import { AnalyticsProvider } from "@/components/providers/AnalyticsProvider";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-plus-jakarta",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://cityframe.app"),
@@ -80,7 +84,7 @@ export default function RootLayout({
       <head>
         {/* Using MapLibre GL (open-source) - CSS loaded via component */}
       </head>
-      <body className={inter.className}>
+      <body className={plusJakarta.className}>
         <AnalyticsProvider>
           {children}
         </AnalyticsProvider>
