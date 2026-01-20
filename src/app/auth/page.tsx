@@ -13,6 +13,9 @@ import { toast } from "sonner";
 import Image from "next/image";
 import Link from "next/link";
 
+// Prelaunch mode - auth page is not accessible
+const IS_PRELAUNCH = process.env.NEXT_PUBLIC_PRELAUNCH === "true";
+
 function AuthContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -25,12 +28,28 @@ function AuthContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Redirect to home in prelaunch mode
+  useEffect(() => {
+    if (IS_PRELAUNCH) {
+      router.replace("/");
+    }
+  }, [router]);
+
   // Redirect if already authenticated
   useEffect(() => {
     if (authenticated && !authLoading) {
       router.replace(redirectTo);
     }
   }, [authenticated, authLoading, router, redirectTo]);
+
+  // Show loading in prelaunch mode (while redirecting)
+  if (IS_PRELAUNCH) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-background">
+        <LoadingLogo size="lg" text="Redirecting..." />
+      </main>
+    );
+  }
 
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
