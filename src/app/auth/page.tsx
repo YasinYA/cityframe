@@ -94,7 +94,7 @@ function AuthContent() {
     <main className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden">
       {/* Map Roads Pattern */}
       <div
-        className="absolute inset-0 opacity-[0.12]"
+        className="absolute inset-0 opacity-[0.2]"
         style={{
           backgroundImage: `url("/road_layout.svg")`,
           backgroundRepeat: 'no-repeat',

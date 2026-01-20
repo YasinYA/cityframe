@@ -1,4 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" baseProfile="full" viewBox="0 0 400 533">
+  <style>
+    @keyframes flow {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: -20; }
+    }
+    path {
+      stroke-dasharray: 4 2;
+      animation: flow 3s linear infinite;
+    }
+  </style>
   <path fill="none" stroke="#000" stroke-width=".25" d="M326 527h1l1 1h1l1 1h1l1 1 1 1-1 1h-1l-1-1h-1l-1-1h-1l-1-1h-1 1l1 1h1l1 1h1l1 1h1l1-1v-1h-1l-1-1h-1l-1-1h-1l-1-1m-50-3v1l1 1h1l1 1 1 1h1l1 1h1l1 1 1 1v1l1-1 1-1 1-1 1 1v1l-1 1 1-1v-1l-1-1-1-1h-1l-1-1h-1l-1-1h-1l-1-1h-1l-1-1h-2m-16 0-1 1-1 1 1 1 1 1h1l1 1 1 1h1l1 1 1 1h1l-1-1h-1l-1-1-1-1h-1l-1-1-1-1h-1l-1-1 1-1 1-1h1l1 1 1 1h1l1 1 1 1h1l1 1 1 1 1 1v1-2l-1-1h-1l-1-1h-1l-1-1-1-1h-1l-1-1-1-1m98-2v2l-1 1h1l1 1h1l1 1h1l1 1h1l1 1h1l1 1 1 1v1l1-1h1v-1l1-1v-1h-1l-1-1h-1l-1-1h-1l-1-1h-1l-1-1h-1l-1-1h-1l-1-1"/>
   <path fill="none" stroke="#000" stroke-width=".25" d="m358 521 1 1v1l-1 1v1l-1 1-1 1v2l-1 1-1-1-1-1h-1l-1-1h-1l-1-1h-1l-1-1h-1l-1-1 1 1h1l1 1h1l1 1h1l1 1 1 1-1 1h-1l-1-1h-1l-1-1h-1l-1-1h-1l-1-1 1 1h1l1 1h1l1 1h1l1 1h1l1 1 1 1h2l1-1 1-1 1 1v1h3-1l-1-1-1-1-1-1 1-1 1-1 1 1h1l1 1h1l1 1h1l1 1 1 1h1l-1-1h-1l-1-1h-1l-1-1h-1l-1-1h-1l-1-1h-1v1l-1 1v1l-1 1-1 1h-1l-1-1 1-1 1-1v-1l1-1v-1l1-1v-1l1-1v-1m-167-1 1-1h1l1 1 1 1 1 1 1 1 1 1 1 1v1l-1 1-1-1h-1l-1-1-1-1-1-1-1-1 1 1 1 1 1 1 1 1 1 1v1l-1 1-1-1-1-1-1-1-1-1-1-1-1-1-1-1 1-1"/>
   <path fill="none" stroke="#000" stroke-width=".25" d="m192 518 1-1h1l1 1 1 1 1 1h1l1 1 1 1 1 1h1v-1l1-1 1 1v2l1 1h1l1 1-1 1h-2l-1-1-1 1v2l-1 1-1 1h-2l-1-1 1-1 1-1h1v-3l-1-1-1-1-1-1h-1l-1-1-1-1h-1l-1 1-1 1-1 1-1 1-1 1h-1l-1-1 1-1 1-1 1-1 1-1 1-1"/>
