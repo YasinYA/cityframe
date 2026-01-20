@@ -1,0 +1,37 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="arrowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00a8e6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0090c9;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="baseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00a8e6;stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:#00a8e6;stop-opacity:0.08" />
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00a8e6;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#00a8e6;stop-opacity:0" />
+    </linearGradient>
+  </defs>
+
+  <!-- Glow effect behind arrow -->
+  <ellipse cx="100" cy="120" rx="40" ry="15" fill="url(#glowGrad)" />
+
+  <!-- Base platform -->
+  <rect x="35" y="140" width="130" height="20" rx="10" fill="url(#baseGrad)" />
+
+  <!-- Download arrow stem -->
+  <rect x="88" y="40" width="24" height="60" rx="4" fill="url(#arrowGrad)" />
+
+  <!-- Download arrow head -->
+  <path d="M100 135 L65 95 L82 95 L82 95 L82 95 L118 95 L118 95 L135 95 Z" fill="url(#arrowGrad)" />
+
+  <!-- Arrow highlight -->
+  <rect x="94" y="48" width="6" height="30" rx="3" fill="white" opacity="0.3" />
+
+  <!-- Motion lines -->
+  <rect x="50" y="55" width="20" height="3" rx="1.5" fill="#00a8e6" opacity="0.2" />
+  <rect x="45" y="70" width="25" height="3" rx="1.5" fill="#00a8e6" opacity="0.15" />
+  <rect x="130" y="55" width="20" height="3" rx="1.5" fill="#00a8e6" opacity="0.2" />
+  <rect x="130" y="70" width="25" height="3" rx="1.5" fill="#00a8e6" opacity="0.15" />
+</svg>

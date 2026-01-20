@@ -79,11 +79,23 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold mb-3">5. Intellectual Property</h2>
+              <h2 className="text-xl font-semibold mb-3">5. License & Intellectual Property</h2>
+              <p className="text-muted-foreground mb-4">
+                <strong>Personal Use License:</strong> The standard City Frame license grants you a personal,
+                non-exclusive, non-transferable right to use generated wallpapers for personal, non-commercial
+                purposes only. This includes using wallpapers on your own devices, sharing with friends and family,
+                and personal social media use.
+              </p>
+              <p className="text-muted-foreground mb-4">
+                <strong>Commercial Use:</strong> Commercial use of generated wallpapers is not permitted under the
+                standard license. Commercial use includes, but is not limited to: client projects, merchandise,
+                printing services, marketing materials, resale, or any use intended to generate revenue.
+                For commercial licensing, please contact us at info@cityframe.app.
+              </p>
               <p className="text-muted-foreground">
-                Wallpapers generated through City Frame are for personal use. The underlying map data
-                is sourced from third-party providers and subject to their respective licenses.
-                City Frame retains rights to the application, design, and custom style configurations.
+                <strong>Ownership:</strong> The underlying map data is sourced from third-party providers and subject
+                to their respective licenses. City Frame retains all rights to the application, design, custom style
+                configurations, and the unique artistic rendering of the wallpapers.
               </p>
             </section>
 

@@ -1,0 +1,43 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00a8e6;stop-opacity:0.08" />
+      <stop offset="100%" style="stop-color:#00a8e6;stop-opacity:0.02" />
+    </linearGradient>
+    <linearGradient id="pinGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00a8e6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0090c9;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00a8e6;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#00a8e6;stop-opacity:0.1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="85" fill="url(#bgGrad)" />
+
+  <!-- Grid lines for map feel -->
+  <line x1="100" y1="20" x2="100" y2="180" stroke="#00a8e6" stroke-opacity="0.1" stroke-width="1" />
+  <line x1="20" y1="100" x2="180" y2="100" stroke="#00a8e6" stroke-opacity="0.1" stroke-width="1" />
+  <line x1="60" y1="20" x2="60" y2="180" stroke="#00a8e6" stroke-opacity="0.06" stroke-width="1" />
+  <line x1="140" y1="20" x2="140" y2="180" stroke="#00a8e6" stroke-opacity="0.06" stroke-width="1" />
+  <line x1="20" y1="60" x2="180" y2="60" stroke="#00a8e6" stroke-opacity="0.06" stroke-width="1" />
+  <line x1="20" y1="140" x2="180" y2="140" stroke="#00a8e6" stroke-opacity="0.06" stroke-width="1" />
+
+  <!-- Pulse rings -->
+  <circle cx="100" cy="95" r="50" fill="none" stroke="url(#ringGrad)" stroke-width="2" />
+  <circle cx="100" cy="95" r="35" fill="none" stroke="url(#ringGrad)" stroke-width="1.5" />
+
+  <!-- Map pin -->
+  <path d="M100 130 L100 130 C100 130 70 95 70 75 C70 58.43 83.43 45 100 45 C116.57 45 130 58.43 130 75 C130 95 100 130 100 130 Z" fill="url(#pinGrad)" />
+
+  <!-- Pin inner circle -->
+  <circle cx="100" cy="75" r="12" fill="white" opacity="0.9" />
+
+  <!-- Pin dot -->
+  <circle cx="100" cy="75" r="5" fill="#00a8e6" />
+
+  <!-- Pin highlight -->
+  <ellipse cx="92" cy="65" rx="4" ry="3" fill="white" opacity="0.4" />
+</svg>

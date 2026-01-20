@@ -209,7 +209,7 @@ export const CITY_OG_STYLES: Record<string, string> = {
   "bangkok": "sunset-vibrant",
   "mumbai": "terracotta",
   "delhi": "desert-sand",
-  "dubai": "midnight-gold",
+  "dubai": "desert-sand",
   "abu-dhabi": "desert-sand",
   "tel-aviv": "deep-ocean",
   "kuala-lumpur": "forest-night",
