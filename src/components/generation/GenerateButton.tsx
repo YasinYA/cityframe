@@ -65,7 +65,7 @@ export function GenerateButton() {
     return (
       <>
         <Button
-          className="w-full gap-2"
+          className="w-full gap-2 h-12 rounded-xl font-semibold shadow-lg shadow-primary/20"
           onClick={() => setShowDownloadDialog(true)}
         >
           <Download className="w-4 h-4" />
@@ -75,19 +75,21 @@ export function GenerateButton() {
         <Dialog open={showDownloadDialog} onOpenChange={setShowDownloadDialog}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-500" />
+              <div className="mx-auto w-14 h-14 rounded-full bg-green-500/10 flex items-center justify-center mb-4">
+                <CheckCircle2 className="w-7 h-7 text-green-500" />
+              </div>
+              <DialogTitle className="text-center">
                 Wallpapers Ready!
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="text-center">
                 Your wallpapers have been generated. Download them below.
               </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-3 py-4">
+            <div className="space-y-4 py-4">
               {/* Preview Card */}
               {generatedImages.length > 0 && (
-                <div className="flex justify-center gap-3 p-4 bg-secondary/30 rounded-lg">
+                <div className="flex justify-center gap-3 p-5 bg-muted/30 rounded-2xl border">
                   {generatedImages.map((img) => {
                     const preset =
                       DEVICE_PRESETS[img.device as keyof typeof DEVICE_PRESETS];
@@ -96,7 +98,7 @@ export function GenerateButton() {
                       <div
                         key={`preview-${img.device}`}
                         className={cn(
-                          "rounded-lg overflow-hidden shadow-lg bg-black",
+                          "rounded-xl overflow-hidden shadow-xl bg-black ring-2 ring-white/10",
                           isPortrait ? "h-48 w-auto" : "w-48 h-auto"
                         )}
                       >
@@ -113,7 +115,7 @@ export function GenerateButton() {
 
               {generatedImages.length > 1 && (
                 <Button
-                  className="w-full gap-2"
+                  className="w-full gap-2 h-12 rounded-xl font-semibold shadow-lg shadow-primary/20"
                   size="lg"
                   onClick={handleDownloadAll}
                 >
@@ -130,27 +132,29 @@ export function GenerateButton() {
                     <button
                       key={img.device}
                       onClick={() => handleDownload(img.url, img.device)}
-                      className="w-full flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
+                      className="w-full flex items-center justify-between p-4 rounded-xl bg-muted/30 border hover:bg-muted/50 hover:border-primary/20 transition-all"
                     >
                       <div className="text-left">
-                        <div className="font-medium text-sm">
+                        <div className="font-semibold text-sm">
                           {preset?.name || img.device}
                         </div>
                         <div className="text-xs text-muted-foreground">
                           {preset?.width} × {preset?.height}
                         </div>
                       </div>
-                      <Download className="w-4 h-4 text-muted-foreground" />
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <Download className="w-4 h-4 text-primary" />
+                      </div>
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <Button
                 variant="outline"
-                className="flex-1"
+                className="flex-1 h-11 rounded-xl font-semibold hover:bg-primary/5 hover:border-primary/30 hover:text-foreground transition-all"
                 onClick={() => {
                   reset();
                   setShowDownloadDialog(false);
@@ -166,7 +170,7 @@ export function GenerateButton() {
         <Button
           variant="ghost"
           size="sm"
-          className="w-full mt-2 text-muted-foreground"
+          className="w-full mt-2 text-muted-foreground rounded-xl hover:bg-primary/5 hover:text-foreground transition-all"
           onClick={reset}
         >
           Generate Another
@@ -179,16 +183,18 @@ export function GenerateButton() {
   if (error) {
     return (
       <div className="space-y-3">
-        <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20 flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+        <div className="p-4 rounded-xl bg-destructive/10 border-2 border-destructive/20 flex items-start gap-3">
+          <div className="w-8 h-8 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
+            <AlertCircle className="w-4 h-4 text-destructive" />
+          </div>
           <div>
-            <div className="font-medium text-sm text-destructive">
+            <div className="font-semibold text-sm text-destructive">
               Generation Failed
             </div>
             <div className="text-xs text-destructive/80 mt-1">{error}</div>
           </div>
         </div>
-        <Button variant="outline" className="w-full" onClick={reset}>
+        <Button variant="outline" className="w-full h-11 rounded-xl font-semibold hover:bg-primary/5 hover:border-primary/30 hover:text-foreground transition-all" onClick={reset}>
           <RefreshCw className="w-4 h-4 mr-2" />
           Try Again
         </Button>
@@ -201,19 +207,19 @@ export function GenerateButton() {
     return (
       <div className="space-y-4">
         <div className="relative">
-          <div className="w-full h-3 bg-secondary rounded-full overflow-hidden">
+          <div className="w-full h-3 bg-muted/50 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-primary to-primary/80 transition-all duration-500 ease-out"
+              className="h-full bg-gradient-to-r from-primary to-primary/80 transition-all duration-500 ease-out rounded-full"
               style={{ width: `${Math.max(jobProgress, 5)}%` }}
             />
           </div>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-full h-3 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
+            <div className="w-full h-3 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer rounded-full" />
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-          <Loader2 className="w-4 h-4 animate-spin" />
+        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground font-medium">
+          <Loader2 className="w-4 h-4 animate-spin text-primary" />
           <span>
             {jobStatus === "pending"
               ? "Starting generation..."
@@ -227,7 +233,7 @@ export function GenerateButton() {
   // Map not ready state
   if (!mapInstance) {
     return (
-      <Button className="w-full gap-2" disabled>
+      <Button className="w-full gap-2 h-12 rounded-xl font-semibold" disabled>
         <Loader2 className="w-4 h-4 animate-spin" />
         Loading map...
       </Button>
@@ -237,7 +243,7 @@ export function GenerateButton() {
   // Auth loading state
   if (authLoading) {
     return (
-      <Button className="w-full gap-2" disabled>
+      <Button className="w-full gap-2 h-12 rounded-xl font-semibold" disabled>
         <Loader2 className="w-4 h-4 animate-spin" />
         Loading...
       </Button>
@@ -249,14 +255,14 @@ export function GenerateButton() {
     return (
       <>
         <Button
-          className="w-full gap-2"
+          className="w-full gap-2 h-12 rounded-xl font-semibold shadow-lg shadow-primary/20"
           variant="default"
           onClick={() => setShowAuthModal(true)}
         >
           <Lock className="w-4 h-4" />
           Sign in to Generate
         </Button>
-        <p className="text-xs text-muted-foreground text-center mt-2">
+        <p className="text-xs text-muted-foreground text-center mt-3 font-medium">
           Free preview. Sign in to download wallpapers.
         </p>
         <SignInModal
@@ -269,7 +275,7 @@ export function GenerateButton() {
 
   // Default state - authenticated
   return (
-    <Button className="w-full gap-2" onClick={handleGenerate}>
+    <Button className="w-full gap-2 h-12 rounded-xl font-semibold shadow-lg shadow-primary/20" onClick={handleGenerate}>
       <Sparkles className="w-4 h-4" />
       Generate Wallpaper
     </Button>

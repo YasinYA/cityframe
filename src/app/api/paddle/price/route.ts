@@ -1,17 +1,25 @@
 import { NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
+// Allow caching as prices don't change frequently
+export const revalidate = 3600; // Revalidate every hour
 
 export async function GET() {
   // Return fallback if Paddle is not configured
   if (!process.env.PADDLE_API_KEY || !process.env.PADDLE_PRO_PRICE_ID) {
-    return NextResponse.json({
-      id: "fallback",
-      amount: 9.99,
-      currency: "usd",
-      name: "Pro",
-      description: "Lifetime access to all features",
-    });
+    return NextResponse.json(
+      {
+        id: "fallback",
+        amount: 9.99,
+        currency: "usd",
+        name: "Pro",
+        description: "Lifetime access to all features",
+      },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+        },
+      }
+    );
   }
 
   try {
@@ -25,13 +33,20 @@ export async function GET() {
       ? parseInt(price.unitPrice.amount) / 100
       : 0;
 
-    return NextResponse.json({
-      id: price.id,
-      amount,
-      currency: price.unitPrice?.currencyCode?.toLowerCase() || "usd",
-      name: price.name || "Pro",
-      description: price.description || "Lifetime access to all features",
-    });
+    return NextResponse.json(
+      {
+        id: price.id,
+        amount,
+        currency: price.unitPrice?.currencyCode?.toLowerCase() || "usd",
+        name: price.name || "Pro",
+        description: price.description || "Lifetime access to all features",
+      },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+        },
+      }
+    );
   } catch (error) {
     console.error("Error fetching price:", error);
     // Return fallback on error

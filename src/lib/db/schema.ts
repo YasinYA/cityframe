@@ -9,11 +9,17 @@ import {
   jsonb,
 } from "drizzle-orm/pg-core";
 
+// Re-export Better Auth schema tables
+export * from "./auth-schema";
+
+// Import Better Auth user table for references
+import { user as authUser } from "./auth-schema";
+
 // Jobs table - tracks wallpaper generation jobs
 export const jobs = pgTable("jobs", {
   id: uuid("id").primaryKey().defaultRandom(),
   sessionId: varchar("session_id", { length: 255 }), // For anonymous users
-  userId: uuid("user_id").references(() => users.id),
+  userId: text("user_id").references(() => authUser.id), // Reference Better Auth user
   status: varchar("status", { length: 20 }).default("pending").notNull(),
   location: jsonb("location").notNull(), // {lat, lng, zoom, bearing, pitch}
   style: varchar("style", { length: 50 }).notNull(),
@@ -37,7 +43,8 @@ export const images = pgTable("images", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// Users table (optional, for pro features)
+// Legacy users table - kept for migration, will be deprecated
+// Better Auth uses its own "user" table
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: varchar("email", { length: 255 }).unique().notNull(),
@@ -53,5 +60,5 @@ export type Job = typeof jobs.$inferSelect;
 export type NewJob = typeof jobs.$inferInsert;
 export type Image = typeof images.$inferSelect;
 export type NewImage = typeof images.$inferInsert;
-export type User = typeof users.$inferSelect;
-export type NewUser = typeof users.$inferInsert;
+export type LegacyUser = typeof users.$inferSelect;
+export type NewLegacyUser = typeof users.$inferInsert;

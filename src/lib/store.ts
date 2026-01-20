@@ -64,7 +64,7 @@ interface AppState {
   // Actions
   captureMapCanvas: () => Promise<string | null>;
   startGeneration: () => Promise<void>;
-  checkStatus: () => Promise<void>;
+  checkStatus: (attempt?: number) => Promise<void>;
   getDownloadLinks: () => Promise<void>;
   reset: () => void;
 }
@@ -403,10 +403,20 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
   },
 
-  // Check job status
-  checkStatus: async () => {
+  // Check job status with exponential backoff
+  checkStatus: async (attempt = 1) => {
     const { currentJobId } = get();
     if (!currentJobId) return;
+
+    // Max 60 attempts (about 5 minutes with exponential backoff)
+    const MAX_ATTEMPTS = 60;
+    if (attempt > MAX_ATTEMPTS) {
+      set({
+        error: "Job timed out. Please try again.",
+        jobStatus: "failed",
+      });
+      return;
+    }
 
     try {
       const response = await fetch(`/api/status/${currentJobId}`);
@@ -419,9 +429,11 @@ export const useAppStore = create<AppState>((set, get) => ({
         error: data.error,
       });
 
-      // If still processing, poll again
+      // If still processing, poll again with exponential backoff
       if (data.status === "pending" || data.status === "processing") {
-        setTimeout(() => get().checkStatus(), 1000);
+        // Exponential backoff: 1s -> 2s -> 4s -> 8s (capped at 8s)
+        const delay = Math.min(1000 * Math.pow(2, Math.floor(attempt / 3)), 8000);
+        setTimeout(() => get().checkStatus(attempt + 1), delay);
       } else if (data.status === "completed") {
         // Get download links
         get().getDownloadLinks();

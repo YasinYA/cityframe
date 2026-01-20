@@ -4,9 +4,25 @@ import { db } from "@/lib/db/client";
 import { jobs } from "@/lib/db/schema";
 import { addGenerationJob } from "@/lib/queue/bullmq";
 import { MapLocation, DeviceType, AIOptions } from "@/types";
-import { SESSION_COOKIE_NAME } from "@/lib/auth/config";
+import { auth } from "@/lib/auth";
+import { checkRateLimit, getRateLimitHeaders } from "@/lib/redis/rateLimit";
+import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
+
+// Rate limit: 10 generations per user per hour
+const USER_RATE_LIMIT = {
+  maxRequests: 10,
+  windowSeconds: 3600, // 1 hour
+  prefix: "ratelimit:generate:user",
+};
+
+// Rate limit: 30 generations per IP per hour (to prevent abuse from shared IPs)
+const IP_RATE_LIMIT = {
+  maxRequests: 30,
+  windowSeconds: 3600,
+  prefix: "ratelimit:generate:ip",
+};
 
 interface GenerateRequestBody {
   location: MapLocation;
@@ -17,12 +33,38 @@ interface GenerateRequestBody {
 
 export async function POST(request: NextRequest) {
   try {
+    // Get client IP for rate limiting
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+               request.headers.get("x-real-ip") ||
+               "unknown";
+
+    // Check IP rate limit first
+    const ipLimit = await checkRateLimit(ip, IP_RATE_LIMIT);
+    if (!ipLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many generation requests. Please try again later." },
+        { status: 429, headers: getRateLimitHeaders(ipLimit) }
+      );
+    }
+
     // Check authentication - require sign-in to generate
-    const sessionEmail = request.cookies.get(SESSION_COOKIE_NAME)?.value;
-    if (!sessionEmail) {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session?.user?.email) {
       return NextResponse.json(
         { error: "Authentication required. Please sign in to generate wallpapers." },
         { status: 401 }
+      );
+    }
+
+    // Check user-specific rate limit
+    const userLimit = await checkRateLimit(session.user.email, USER_RATE_LIMIT);
+    if (!userLimit.allowed) {
+      return NextResponse.json(
+        { error: "You've reached the hourly generation limit. Please try again later." },
+        { status: 429, headers: getRateLimitHeaders(userLimit) }
       );
     }
 
@@ -49,14 +91,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate session ID for anonymous users
-    const sessionId = request.cookies.get("session_id")?.value || uuidv4();
-
     // Create job in database
     const jobId = uuidv4();
     await db.insert(jobs).values({
       id: jobId,
-      sessionId,
+      userId: session.user.id,
       status: "pending",
       location: {
         lat: location.lat,
@@ -79,26 +118,13 @@ export async function POST(request: NextRequest) {
       ai,
     });
 
-    // Create response with session cookie
-    const response = NextResponse.json({
+    return NextResponse.json({
       jobId,
       status: "pending",
       message: ai?.enabled
         ? "Wallpaper generation started with AI enhancement"
         : "Wallpaper generation started",
     });
-
-    // Set session cookie if not exists
-    if (!request.cookies.get("session_id")) {
-      response.cookies.set("session_id", sessionId, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 365, // 1 year
-      });
-    }
-
-    return response;
   } catch (error) {
     console.error("Generate error:", error);
     return NextResponse.json(

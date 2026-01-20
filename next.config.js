@@ -1,5 +1,10 @@
 const { withSentryConfig } = require("@sentry/nextjs");
 
+// Bundle analyzer (enabled via ANALYZE=true npm run build)
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -20,6 +25,14 @@ const nextConfig = {
         hostname: '*.minio.*',
       },
     ],
+    // Optimized image formats
+    formats: ['image/avif', 'image/webp'],
+    // Device sizes for responsive images
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    // Image sizes for next/image
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // Reduce quality slightly for better performance
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
   },
   eslint: {
     // ESLint 9 is incompatible with Next.js 14 - run lint separately
@@ -33,10 +46,12 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '10mb',
     },
+    // Optimize package imports for smaller bundles
+    optimizePackageImports: ['lucide-react', 'framer-motion'],
   },
 };
 
-module.exports = withSentryConfig(nextConfig, {
+module.exports = withBundleAnalyzer(withSentryConfig(nextConfig, {
   org: "cityframe",
   project: "cityframe",
   silent: !process.env.CI,
@@ -54,4 +69,4 @@ module.exports = withSentryConfig(nextConfig, {
       removeDebugLogging: true,
     },
   },
-});
+}));

@@ -12,11 +12,11 @@ export const metadata: Metadata = {
 export default function RefundPage() {
   return (
     <main className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
-        <div className="container flex h-14 items-center px-4 max-w-6xl mx-auto">
+      <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md">
+        <div className="container flex h-[60px] md:h-[70px] items-center px-4 md:px-6 max-w-6xl mx-auto">
           <div className="flex items-center gap-3">
             <Link href="/">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/5 hover:text-foreground">
                 <ArrowLeft className="w-5 h-5" />
               </Button>
             </Link>
@@ -26,17 +26,18 @@ export default function RefundPage() {
                 alt="City Frame"
                 width={32}
                 height={32}
+                className="w-8 h-8 md:w-9 md:h-9"
               />
-              <span className="font-semibold">City Frame</span>
+              <span className="font-extrabold text-lg md:text-xl tracking-tight">City Frame</span>
             </Link>
           </div>
         </div>
       </header>
 
-      <section className="py-12 md:py-16">
-        <div className="container px-4 max-w-3xl mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">Refund Policy</h1>
-          <p className="text-muted-foreground mb-8">Last updated: January 2025</p>
+      <section className="py-12 md:py-20">
+        <div className="container px-4 md:px-6 max-w-3xl mx-auto">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-3">Refund Policy</h1>
+          <p className="text-muted-foreground mb-10 text-base md:text-lg">Last updated: January 2025</p>
 
           <div className="prose prose-neutral dark:prose-invert max-w-none space-y-6">
             <section>
@@ -84,9 +85,9 @@ export default function RefundPage() {
           </div>
 
           <div className="mt-12 pt-8 border-t">
-            <div className="flex gap-4 text-sm text-muted-foreground">
-              <Link href="/terms" className="hover:underline">Terms of Service</Link>
-              <Link href="/privacy" className="hover:underline">Privacy Policy</Link>
+            <div className="flex gap-6 text-sm text-muted-foreground font-medium">
+              <Link href="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
+              <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
             </div>
           </div>
         </div>

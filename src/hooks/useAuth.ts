@@ -1,81 +1,54 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { SessionResponse } from "@/app/api/auth/session/route";
+import { useCallback } from "react";
+import { authClient } from "@/lib/auth-client";
 
 export function useAuth() {
-  const [session, setSession] = useState<SessionResponse>({
-    authenticated: false,
-    user: null,
-  });
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: session, isPending: isLoading, error } = authClient.useSession();
 
-  const fetchSession = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch("/api/auth/session");
-      if (response.ok) {
-        const data = await response.json();
-        setSession(data);
-      }
-    } catch (error) {
-      console.error("Failed to fetch session:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchSession();
-  }, [fetchSession]);
-
-  const sendOTP = async (email: string) => {
-    const response = await fetch("/api/auth/send-otp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
+  const sendOTP = useCallback(async (email: string) => {
+    const { error } = await authClient.emailOtp.sendVerificationOtp({
+      email,
+      type: "sign-in",
     });
 
-    if (!response.ok) {
-      const data = await response.json();
-      throw new Error(data.error || "Failed to send code");
+    if (error) {
+      throw new Error(error.message || "Failed to send code");
     }
 
     return true;
-  };
+  }, []);
 
-  const verifyOTP = async (email: string, otp: string) => {
-    const response = await fetch("/api/auth/verify-otp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, otp }),
+  const verifyOTP = useCallback(async (email: string, otp: string) => {
+    const { data, error } = await authClient.signIn.emailOtp({
+      email,
+      otp,
     });
 
-    if (!response.ok) {
-      const data = await response.json();
-      throw new Error(data.error || "Verification failed");
+    if (error) {
+      throw new Error(error.message || "Verification failed");
     }
 
-    const data = await response.json();
-    setSession({
-      authenticated: true,
-      user: data.user,
-    });
+    return data?.user || null;
+  }, []);
 
-    return data.user;
-  };
+  const signOut = useCallback(async () => {
+    await authClient.signOut();
+  }, []);
 
-  const signOut = async () => {
-    await fetch("/api/auth/signout", { method: "POST" });
-    setSession({ authenticated: false, user: null });
-  };
+  const refresh = useCallback(async () => {
+    // Better Auth handles session refresh automatically
+    // This is kept for interface compatibility
+  }, []);
 
   return {
-    ...session,
+    authenticated: !!session?.user,
+    user: session?.user || null,
     isLoading,
+    error,
     sendOTP,
     verifyOTP,
     signOut,
-    refresh: fetchSession,
+    refresh,
   };
 }

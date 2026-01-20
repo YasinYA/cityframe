@@ -60,16 +60,17 @@ export function CityStylePageClient({
   return (
     <main className="h-screen flex flex-col bg-background overflow-hidden">
       {/* Header */}
-      <header className="shrink-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
-        <div className="flex h-14 items-center justify-between">
+      <header className="shrink-0 z-50 border-b bg-background/80 backdrop-blur-md px-4 md:px-6">
+        <div className="flex h-[60px] md:h-[70px] items-center justify-between max-w-[1800px] mx-auto">
           <Link href="/" className="flex items-center gap-2">
             <Image
               src="/logo.webp"
               alt="City Frame"
               width={32}
               height={32}
+              className="w-8 h-8 md:w-9 md:h-9"
             />
-            <span className="font-semibold hidden sm:block">City Frame</span>
+            <span className="font-extrabold text-lg md:text-xl tracking-tight hidden sm:block">City Frame</span>
           </Link>
 
           <div className="flex items-center gap-3">
@@ -77,16 +78,16 @@ export function CityStylePageClient({
               authenticated ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Button variant="ghost" size="sm" className="gap-2 rounded-xl hover:bg-primary/5 hover:text-foreground transition-all">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                         <User className="w-4 h-4 text-primary" />
                       </div>
-                      <span className="hidden sm:inline text-sm max-w-[120px] truncate">
+                      <span className="hidden sm:inline text-sm font-medium max-w-[120px] truncate">
                         {user?.email}
                       </span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
+                  <DropdownMenuContent align="end" className="rounded-xl border-2 shadow-lg">
                     <DropdownMenuItem disabled className="text-xs text-muted-foreground">
                       {user?.email}
                     </DropdownMenuItem>
@@ -98,7 +99,7 @@ export function CityStylePageClient({
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <Button size="sm" variant="outline" onClick={() => setSignInOpen(true)}>
+                <Button size="sm" variant="outline" onClick={() => setSignInOpen(true)} className="rounded-xl font-semibold hover:bg-primary/5 hover:border-primary/30 hover:text-foreground transition-all">
                   Sign In
                 </Button>
               )
@@ -294,17 +295,17 @@ export function CityStylePageClient({
         {/* Mobile Bottom Bar (when sidebar is closed) */}
         <div className="md:hidden fixed bottom-4 left-4 right-4 z-30">
           {!sidebarOpen && (
-            <Card className="p-3 shadow-lg">
-              <div className="flex gap-2">
+            <Card className="p-3 shadow-2xl shadow-primary/10 border-2 rounded-2xl bg-background/95 backdrop-blur-md">
+              <div className="flex gap-3">
                 <Button
                   variant="outline"
-                  className="flex-1"
+                  className="flex-1 h-12 rounded-xl font-semibold hover:bg-primary/5 hover:border-primary/30 hover:text-foreground transition-all"
                   onClick={() => setSidebarOpen(true)}
                 >
                   <Palette className="w-4 h-4 mr-2" />
                   Customize
                 </Button>
-                <Button className="flex-1" onClick={() => setSidebarOpen(true)}>
+                <Button className="flex-1 h-12 rounded-xl font-semibold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all" onClick={() => setSidebarOpen(true)}>
                   <Download className="w-4 h-4 mr-2" />
                   Generate
                 </Button>
