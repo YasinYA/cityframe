@@ -1063,10 +1063,10 @@ export default function PreLaunchPage() {
               className="text-center lg:text-left"
             >
               <motion.h2 variants={fadeInUp} className="text-[36px] sm:text-[44px] md:text-[56px] lg:text-[80px] xl:text-[96px] font-extrabold tracking-tight mb-4 md:mb-12 lg:mb-16 leading-[1.1]">
-                Ready to get started?
+                Join the first users
               </motion.h2>
               <motion.p variants={fadeInUp} className="text-base md:text-xl lg:text-2xl text-muted-foreground leading-relaxed">
-                Join the waitlist today and be among the first to transform your favorite cities into stunning wallpapers.
+                Join the launch list today and be among the first to transform your favorite cities into stunning wallpapers.
               </motion.p>
             </motion.div>
 
@@ -1077,7 +1077,7 @@ export default function PreLaunchPage() {
               variants={fadeInRight}
               className="bg-muted/30 p-6 md:p-8 lg:p-10 rounded-2xl md:rounded-3xl"
             >
-              <h3 className="text-lg md:text-xl font-bold mb-2">Join the waitlist</h3>
+              <h3 className="text-lg md:text-xl font-bold mb-2">Join the launch list</h3>
               <p className="text-muted-foreground text-sm md:text-base mb-4 md:mb-6">Be the first to know when we launch.</p>
               {status === "success" ? (
                 <div className="flex items-center gap-3 py-3 md:py-4 px-4 md:px-6 bg-green-50 text-green-600 rounded-xl w-fit">
