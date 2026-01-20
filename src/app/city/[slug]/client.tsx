@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { MapView } from "@/components/map/MapView";
 import { StylePicker } from "@/components/styles/StylePicker";
 import { DevicePicker } from "@/components/devices/DevicePicker";
@@ -21,7 +22,11 @@ import {
   User,
   LogOut,
   Download,
+  Rocket,
 } from "lucide-react";
+
+// Prelaunch mode
+const IS_PRELAUNCH = process.env.NEXT_PUBLIC_PRELAUNCH === "true";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -56,6 +61,7 @@ interface CityPageClientProps {
 }
 
 export function CityPageClient({ city, styles }: CityPageClientProps) {
+  const router = useRouter();
   const { setLocation, setCityName } = useAppStore();
   const { authenticated, isLoading, user, signOut } = useAuth();
   const [signInOpen, setSignInOpen] = useState(false);
@@ -100,7 +106,7 @@ export function CityPageClient({ city, styles }: CityPageClientProps) {
           </Link>
 
           <div className="flex items-center gap-3">
-            {!isLoading && (
+            {!IS_PRELAUNCH && !isLoading && (
               authenticated ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -273,13 +279,23 @@ export function CityPageClient({ city, styles }: CityPageClientProps) {
                     <Palette className="w-4 h-4 mr-2" />
                     Customize
                   </Button>
-                  <Button
-                    className="flex-1 h-12 rounded-xl font-semibold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all"
-                    onClick={() => setSidebarOpen(true)}
-                  >
-                    <Download className="w-4 h-4 mr-2" />
-                    Generate
-                  </Button>
+                  {IS_PRELAUNCH ? (
+                    <Button
+                      className="flex-1 h-12 rounded-xl font-semibold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all"
+                      onClick={() => router.push("/#get-started")}
+                    >
+                      <Rocket className="w-4 h-4 mr-2" />
+                      Join Launch List
+                    </Button>
+                  ) : (
+                    <Button
+                      className="flex-1 h-12 rounded-xl font-semibold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all"
+                      onClick={() => setSidebarOpen(true)}
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Generate
+                    </Button>
+                  )}
                 </div>
               </Card>
             </motion.div>

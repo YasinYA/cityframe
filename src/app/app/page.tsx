@@ -19,6 +19,9 @@ import { useAuth } from '@/hooks/useAuth'
 import { useSubscription } from '@/hooks/useSubscription'
 import { motion } from 'framer-motion'
 
+// Prelaunch mode - app page is not accessible
+const IS_PRELAUNCH = process.env.NEXT_PUBLIC_PRELAUNCH === 'true'
+
 export default function AppPage() {
 	const router = useRouter()
 	const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -26,12 +29,28 @@ export default function AppPage() {
 	const { isPro, isLoading: subscriptionLoading } = useSubscription()
 	const isLoading = authLoading || subscriptionLoading
 
+	// Redirect to home in prelaunch mode
+	useEffect(() => {
+		if (IS_PRELAUNCH) {
+			router.replace('/')
+		}
+	}, [router])
+
 	// Redirect to auth page if not authenticated
 	useEffect(() => {
-		if (!isLoading && !authenticated) {
+		if (!IS_PRELAUNCH && !isLoading && !authenticated) {
 			router.replace('/auth?redirect=/app')
 		}
 	}, [isLoading, authenticated, router])
+
+	// Show loading state in prelaunch mode (while redirecting)
+	if (IS_PRELAUNCH) {
+		return (
+			<main className='h-screen flex items-center justify-center bg-background'>
+				<LoadingLogo size="lg" text="Redirecting..." />
+			</main>
+		)
+	}
 
 	// Show loading state
 	if (isLoading || !authenticated) {

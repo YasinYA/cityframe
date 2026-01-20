@@ -245,7 +245,7 @@ export const CitySearchSection = memo(function CitySearchSection() {
                       {selectedCity.description}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                      <Link href={`/city/${selectedCity.slug}`}>
+                      <Link href={`/city/${selectedCity.slug}/${getCityStyle(selectedCity.slug).id}`}>
                         <Button size="lg" className="h-14 md:h-16 px-8 md:px-10 rounded-xl text-base md:text-lg w-full sm:w-auto shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all">
                           Explore more
                           <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-2" />

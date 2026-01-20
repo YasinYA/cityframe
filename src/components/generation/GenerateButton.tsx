@@ -18,13 +18,19 @@ import {
   Sparkles,
   RefreshCw,
   Lock,
+  Rocket,
 } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { SignInModal } from "@/components/auth/SignInModal";
 
+// Prelaunch mode shows "Join the Launch List" instead of generate
+const IS_PRELAUNCH = process.env.NEXT_PUBLIC_PRELAUNCH === "true";
+
 export function GenerateButton() {
+  const router = useRouter();
   const {
     jobStatus,
     jobProgress,
@@ -40,6 +46,19 @@ export function GenerateButton() {
   const { authenticated, isLoading: authLoading } = useAuth();
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+
+  // Prelaunch mode - show "Join the Launch List" button
+  if (IS_PRELAUNCH) {
+    return (
+      <Button
+        className="w-full gap-2 h-12 rounded-xl font-semibold shadow-lg shadow-primary/20"
+        onClick={() => router.push("/#get-started")}
+      >
+        <Rocket className="w-4 h-4" />
+        Join the Launch List
+      </Button>
+    );
+  }
 
   const handleDownload = (url: string, device: string) => {
     const link = document.createElement("a");
