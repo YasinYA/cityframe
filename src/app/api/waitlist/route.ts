@@ -40,6 +40,7 @@ async function sendWelcomeCampaign(email: string): Promise<void> {
         "Authorization": `Basic ${config.credentials}`,
       },
       body: JSON.stringify({
+        name: "Welcome Campaign Test",
         subscribers: [email],
       }),
     });
