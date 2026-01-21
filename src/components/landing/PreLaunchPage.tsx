@@ -563,8 +563,60 @@ export default function PreLaunchPage() {
             <Image src="/logo.webp" alt="City Frame" width={24} height={24} className="w-6 h-6 md:w-7 md:h-7" />
             <span className="font-extrabold text-base md:text-lg tracking-tight">City Frame</span>
           </Link>
+
+          {/* Social Media Links */}
+          <div className="flex items-center gap-3">
+            <a
+              href="https://x.com/cityframeapp"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-9 h-9 rounded-full bg-muted/50 hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
+              aria-label="Follow us on X"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+            </a>
+            <a
+              href="https://instagram.com/cityframeapp"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-9 h-9 rounded-full bg-muted/50 hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
+              aria-label="Follow us on Instagram"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+              </svg>
+            </a>
+            <a
+              href="https://pinterest.com/cityframeapp"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-9 h-9 rounded-full bg-muted/50 hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
+              aria-label="Follow us on Pinterest"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.373 0 0 5.372 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12 0-6.628-5.373-12-12-12z" />
+              </svg>
+            </a>
+            <a
+              href="https://reddit.com/r/cityframeapp"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-9 h-9 rounded-full bg-muted/50 hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
+              aria-label="Join us on Reddit"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.373 0 0 5.373 0 12c0 6.628 5.373 12 12 12s12-5.372 12-12c0-6.627-5.373-12-12-12zm6.066 13.31c.028.225.042.453.042.683 0 3.483-4.054 6.307-9.054 6.307-5 0-9.054-2.824-9.054-6.307 0-.23.014-.458.043-.683a1.796 1.796 0 0 1-.726-1.447c0-.992.804-1.796 1.796-1.796.467 0 .893.178 1.213.47 1.195-.857 2.842-1.41 4.676-1.471l.893-4.203a.374.374 0 0 1 .444-.286l2.974.627a1.27 1.27 0 0 1 2.39.597 1.27 1.27 0 0 1-2.52.168l-2.643-.557-.794 3.74c1.795.074 3.403.627 4.573 1.471.32-.292.746-.47 1.213-.47.992 0 1.796.804 1.796 1.796 0 .593-.287 1.119-.726 1.447zM8.25 12.459c-.659 0-1.194.535-1.194 1.194s.535 1.194 1.194 1.194 1.194-.535 1.194-1.194-.535-1.194-1.194-1.194zm7.5 0c-.659 0-1.194.535-1.194 1.194s.535 1.194 1.194 1.194 1.194-.535 1.194-1.194-.535-1.194-1.194-1.194zm-6.428 4.027a.344.344 0 0 0-.055.484c.862 1.059 2.31 1.667 3.978 1.667h.002c1.668 0 3.116-.608 3.978-1.667a.344.344 0 0 0-.484-.484c-.715.68-1.912 1.07-3.244 1.07h-.002c-1.332 0-2.529-.39-3.244-1.07a.344.344 0 0 0-.43 0z" />
+              </svg>
+            </a>
+          </div>
+
           <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 text-xs md:text-sm text-muted-foreground font-medium">
             <Link href="/terms" className="hover:text-foreground transition-colors">Terms</Link>
+            <Link href="/license" className="hover:text-foreground transition-colors">License</Link>
             <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
             <Link href="/refund" className="hover:text-foreground transition-colors">Refunds</Link>
             <a href="mailto:support@cityframe.app" className="hover:text-foreground transition-colors">support@cityframe.app</a>

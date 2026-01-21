@@ -133,6 +133,7 @@ export default function PrivacyPage() {
           <div className="mt-12 pt-8 border-t">
             <div className="flex gap-6 text-sm text-muted-foreground font-medium">
               <Link href="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
+              <Link href="/license" className="hover:text-foreground transition-colors">License</Link>
               <Link href="/refund" className="hover:text-foreground transition-colors">Refund Policy</Link>
             </div>
           </div>

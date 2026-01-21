@@ -61,9 +61,8 @@ export default function RefundPage() {
             <section>
               <h2 className="text-xl font-semibold mb-3">After Your Refund</h2>
               <p className="text-muted-foreground">
-                Once your refund is processed, your account will be returned to the free tier.
-                You will retain access to free features and any wallpapers you have already
-                downloaded.
+                Once your refund is processed, your access will be revoked. You will retain
+                any wallpapers you have already downloaded.
               </p>
             </section>
 
@@ -87,6 +86,7 @@ export default function RefundPage() {
           <div className="mt-12 pt-8 border-t">
             <div className="flex gap-6 text-sm text-muted-foreground font-medium">
               <Link href="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
+              <Link href="/license" className="hover:text-foreground transition-colors">License</Link>
               <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
             </div>
           </div>

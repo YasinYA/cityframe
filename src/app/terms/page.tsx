@@ -53,8 +53,7 @@ export default function TermsPage() {
               <h2 className="text-xl font-semibold mb-3">2. Description of Service</h2>
               <p className="text-muted-foreground">
                 City Frame operates City Frame, a web-based application that allows users to generate
-                custom city map wallpapers for various devices. We offer both free and paid tiers
-                with different feature sets.
+                custom city map wallpapers for various devices.
               </p>
             </section>
 
@@ -146,6 +145,7 @@ export default function TermsPage() {
 
           <div className="mt-12 pt-8 border-t">
             <div className="flex gap-6 text-sm text-muted-foreground font-medium">
+              <Link href="/license" className="hover:text-foreground transition-colors">License</Link>
               <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
               <Link href="/refund" className="hover:text-foreground transition-colors">Refund Policy</Link>
             </div>
