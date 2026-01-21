@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, memo } from "react";
+import { useRef, memo, useState, useEffect } from "react";
 import { Smartphone, Tablet, Monitor, MonitorPlay } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { fadeInUp, stagger } from "./animations";
@@ -8,6 +8,15 @@ import { fadeInUp, stagger } from "./animations";
 // Devices Section with Horizontal Scroll - memoized to prevent unnecessary re-renders
 export const DevicesSection = memo(function DevicesSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"]
@@ -65,35 +74,65 @@ export const DevicesSection = memo(function DevicesSection() {
 
       {/* Horizontal Scrolling Cards */}
       <div className="relative">
-        <motion.div
-          style={{ x }}
-          className="flex gap-4 md:gap-6 pl-4 md:pl-6 lg:pl-[calc((100vw-1280px)/2+24px)]"
-        >
-          {devices.map((item, index) => (
-            <motion.div
-              key={item.title}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ y: -8, transition: { duration: 0.2 } }}
-              className="w-[260px] md:w-[320px] lg:w-[380px] flex-shrink-0 p-5 md:p-8 rounded-2xl md:rounded-3xl bg-background border hover:border-primary/30 hover:shadow-2xl transition-all duration-300 cursor-pointer"
-            >
-              <div className="text-primary text-xs md:text-sm font-bold mb-4 md:mb-6">0{index + 1}</div>
-              <div className="mb-6 md:mb-8 h-24 md:h-32 flex items-center justify-center">
-                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                  {item.type === "phone" && <Smartphone className="w-6 h-6 md:w-8 md:h-8 text-primary" />}
-                  {item.type === "tablet" && <Tablet className="w-6 h-6 md:w-8 md:h-8 text-primary" />}
-                  {item.type === "desktop" && <Monitor className="w-6 h-6 md:w-8 md:h-8 text-primary" />}
-                  {item.type === "ultrawide" && <MonitorPlay className="w-6 h-6 md:w-8 md:h-8 text-primary" />}
+        {/* Mobile: Manual horizontal scroll */}
+        {isMobile ? (
+          <div className="flex gap-4 pl-4 pr-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4">
+            {devices.map((item, index) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="w-[260px] flex-shrink-0 p-5 rounded-2xl bg-background border snap-center"
+              >
+                <div className="text-primary text-xs font-bold mb-4">0{index + 1}</div>
+                <div className="mb-6 h-24 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    {item.type === "phone" && <Smartphone className="w-6 h-6 text-primary" />}
+                    {item.type === "tablet" && <Tablet className="w-6 h-6 text-primary" />}
+                    {item.type === "desktop" && <Monitor className="w-6 h-6 text-primary" />}
+                    {item.type === "ultrawide" && <MonitorPlay className="w-6 h-6 text-primary" />}
+                  </div>
                 </div>
-              </div>
-              <h3 className="font-bold text-lg md:text-2xl mb-2 md:mb-3">{item.title}</h3>
-              <p className="text-muted-foreground text-sm md:text-base leading-relaxed mb-4 md:mb-6">{item.desc}</p>
-              <div className="text-xs md:text-sm text-primary font-semibold">{item.resolution}</div>
-            </motion.div>
-          ))}
-        </motion.div>
+                <h3 className="font-bold text-lg mb-2">{item.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed mb-4">{item.desc}</p>
+                <div className="text-xs text-primary font-semibold">{item.resolution}</div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          /* Desktop: Scroll-based animation */
+          <motion.div
+            style={{ x }}
+            className="flex gap-6 pl-6 lg:pl-[calc((100vw-1280px)/2+24px)]"
+          >
+            {devices.map((item, index) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                className="w-[320px] lg:w-[380px] flex-shrink-0 p-8 rounded-3xl bg-background border hover:border-primary/30 hover:shadow-2xl transition-all duration-300 cursor-pointer"
+              >
+                <div className="text-primary text-sm font-bold mb-6">0{index + 1}</div>
+                <div className="mb-8 h-32 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                    {item.type === "phone" && <Smartphone className="w-8 h-8 text-primary" />}
+                    {item.type === "tablet" && <Tablet className="w-8 h-8 text-primary" />}
+                    {item.type === "desktop" && <Monitor className="w-8 h-8 text-primary" />}
+                    {item.type === "ultrawide" && <MonitorPlay className="w-8 h-8 text-primary" />}
+                  </div>
+                </div>
+                <h3 className="font-bold text-2xl mb-3">{item.title}</h3>
+                <p className="text-muted-foreground text-base leading-relaxed mb-6">{item.desc}</p>
+                <div className="text-sm text-primary font-semibold">{item.resolution}</div>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
       </div>
     </section>
   );
