@@ -130,7 +130,7 @@ export default function PreLaunchPage() {
               className="text-center lg:text-left"
             >
               <motion.div variants={fadeInUp} className="inline-block px-4 py-2 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-6 md:mb-8">
-                Launching Soon
+                🚀 Launching Soon
               </motion.div>
 
               <motion.h1 variants={fadeInUp} className="text-[40px] sm:text-[48px] md:text-[56px] lg:text-[80px] xl:text-[96px] font-extrabold leading-[1.1] tracking-tight mb-6 md:mb-12 lg:mb-16">
