@@ -12,7 +12,7 @@ function getListmonkConfig() {
   const apiUser = process.env.LISTMONK_API_USER;
   const apiToken = process.env.LISTMONK_API_TOKEN;
   const listId = process.env.LISTMONK_LIST_ID;
-  const welcomeCampaignId = process.env.LISTMONK_WELCOME_CAMPAIGN_ID;
+  const welcomeTemplateId = process.env.LISTMONK_WELCOME_TEMPLATE_ID;
 
   if (!listmonkUrl || !apiUser || !apiToken || !listId) {
     return null;
@@ -20,28 +20,31 @@ function getListmonkConfig() {
 
   const credentials = Buffer.from(`${apiUser}:${apiToken}`).toString("base64");
 
-  return { listmonkUrl, credentials, listId: parseInt(listId, 10), welcomeCampaignId: welcomeCampaignId ? parseInt(welcomeCampaignId, 10) : null };
+  return { listmonkUrl, credentials, listId: parseInt(listId, 10), welcomeTemplateId: welcomeTemplateId ? parseInt(welcomeTemplateId, 10) : null };
 }
 
-// Send welcome campaign via Listmonk campaign test endpoint
-// See: https://listmonk.app/docs/apis/campaigns/
-async function sendWelcomeCampaign(email: string): Promise<void> {
+// Send welcome email via Listmonk transactional API
+// See: https://listmonk.app/docs/apis/transactional/
+async function sendWelcomeEmail(email: string, name: string): Promise<void> {
   const config = getListmonkConfig();
-  if (!config || !config.welcomeCampaignId) {
-    console.log("[Waitlist] Welcome campaign not configured, skipping welcome email");
+  if (!config || !config.welcomeTemplateId) {
+    console.log("[Waitlist] Welcome template not configured, skipping welcome email");
     return;
   }
 
   try {
-    const response = await fetch(`${config.listmonkUrl}/api/campaigns/${config.welcomeCampaignId}/test`, {
+    const response = await fetch(`${config.listmonkUrl}/api/tx`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Basic ${config.credentials}`,
       },
       body: JSON.stringify({
-        name: "Welcome Campaign Test",
-        subscribers: [email],
+        subscriber_email: email,
+        template_id: config.welcomeTemplateId,
+        data: {
+          name: name,
+        },
       }),
     });
 
@@ -154,7 +157,7 @@ export async function POST(request: NextRequest) {
     if (result.isNew) {
       console.log(`[Waitlist] New signup: ${name ? `${name} (${email})` : email}`);
       // Send welcome email in the background (don't await to avoid delaying response)
-      sendWelcomeCampaign(email.trim());
+      sendWelcomeEmail(email.trim(), name.trim());
     }
 
     return NextResponse.json(
