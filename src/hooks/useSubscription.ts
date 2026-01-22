@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { PurchaseStatus } from "@/app/api/paddle/status/route";
+import { PurchaseStatus } from "@/app/api/polar/status/route";
 
 // Cache configuration
 const CACHE_TTL = 60 * 1000; // 1 minute
@@ -13,7 +13,7 @@ export function useSubscription() {
     if (cachedStatus && Date.now() - cacheTimestamp < CACHE_TTL) {
       return cachedStatus;
     }
-    return { isPro: false, purchasedAt: null };
+    return { isPro: false, purchasedAt: null, customerId: null };
   });
   const [isLoading, setIsLoading] = useState(() => {
     return !cachedStatus || Date.now() - cacheTimestamp >= CACHE_TTL;
@@ -33,7 +33,7 @@ export function useSubscription() {
     try {
       fetchingRef.current = true;
       setIsLoading(true);
-      const response = await fetch("/api/paddle/status");
+      const response = await fetch("/api/polar/status");
       if (response.ok) {
         const data: PurchaseStatus = await response.json();
         cachedStatus = data;

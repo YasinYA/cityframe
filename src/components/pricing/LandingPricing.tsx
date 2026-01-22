@@ -5,8 +5,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Check, Sparkles, Zap } from "lucide-react";
-import { PriceData } from "@/lib/paddle/config";
 import { motion } from "framer-motion";
+import { PriceData } from "@/app/api/polar/price/route";
 
 export function LandingPricing() {
   const [price, setPrice] = useState<PriceData | null>(null);
@@ -15,7 +15,7 @@ export function LandingPricing() {
   useEffect(() => {
     async function loadPrice() {
       try {
-        const res = await fetch("/api/paddle/price");
+        const res = await fetch("/api/polar/price");
         if (res.ok) {
           const data = await res.json();
           setPrice(data);
