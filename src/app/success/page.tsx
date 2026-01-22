@@ -13,19 +13,24 @@ import { LoadingLogo } from "@/components/ui/loading-logo";
 function SuccessContent() {
   const searchParams = useSearchParams();
   const source = searchParams.get("source");
+  const orderId = searchParams.get("order_id");
+  const customerId = searchParams.get("customer_id");
   const [verified, setVerified] = useState(false);
   const [verifying, setVerifying] = useState(true);
 
   useEffect(() => {
     async function verifyPayment() {
-      // If coming from Paddle checkout
-      if (source === "paddle") {
+      // If coming from Polar checkout
+      if (source === "polar") {
         try {
           // Update Pro status via API
-          const res = await fetch("/api/paddle/status", {
+          const res = await fetch("/api/polar/status", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({}),
+            body: JSON.stringify({
+              customerId: customerId || "unknown",
+              orderId: orderId || "unknown",
+            }),
           });
 
           if (res.ok) {
@@ -62,7 +67,7 @@ function SuccessContent() {
     }
 
     verifyPayment();
-  }, [source]);
+  }, [source, orderId, customerId]);
 
   if (verifying) {
     return (

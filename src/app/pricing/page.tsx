@@ -65,7 +65,7 @@ export default function PricingPage() {
               <div className="p-5 rounded-2xl bg-muted/30 border hover:border-primary/20 transition-colors">
                 <h3 className="font-bold mb-2">What payment methods do you accept?</h3>
                 <p className="text-muted-foreground">
-                  All major credit cards via Paddle.
+                  All major credit cards via Polar.
                 </p>
               </div>
               <div className="p-5 rounded-2xl bg-muted/30 border hover:border-primary/20 transition-colors">

@@ -5,13 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useAuth } from "@/hooks/useAuth";
-import { openPaddleCheckout } from "@/lib/paddle/client";
-import { PriceData } from "@/lib/paddle/config";
+import { openPolarCheckout } from "@/lib/polar/client";
 import { SignInModal } from "@/components/auth/SignInModal";
 import { analytics } from "@/lib/analytics/mixpanel";
 import { Check, Sparkles, Zap, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { PriceData } from "@/app/api/polar/price/route";
 
 export function PricingCards() {
   const { isPro, isLoading: subLoading } = useSubscription();
@@ -26,7 +26,7 @@ export function PricingCards() {
   useEffect(() => {
     async function loadPrice() {
       try {
-        const res = await fetch("/api/paddle/price");
+        const res = await fetch("/api/polar/price");
         if (res.ok) {
           const data = await res.json();
           setPrice(data);
@@ -41,18 +41,22 @@ export function PricingCards() {
   }, []);
 
   const handlePurchase = async () => {
-    // If not authenticated, show sign in modal
     if (!authenticated) {
       setSignInOpen(true);
       return;
     }
 
-    if (!price?.id) return;
-
-    // Check if Paddle is configured (fallback means not configured)
-    if (price.id === "fallback") {
+    const productId = process.env.NEXT_PUBLIC_POLAR_PRODUCT_ID;
+    if (!productId) {
       toast.error("Payments not configured", {
-        description: "Paddle is not set up yet. Please add PADDLE_API_KEY to .env",
+        description: "NEXT_PUBLIC_POLAR_PRODUCT_ID is missing in .env",
+      });
+      return;
+    }
+
+    if (price?.id === "fallback") {
+      toast.error("Payments not configured", {
+        description: "Polar is not set up yet. Please add POLAR_ACCESS_TOKEN to .env",
       });
       return;
     }
@@ -60,23 +64,40 @@ export function PricingCards() {
     try {
       setIsCheckingOut(true);
       analytics.checkoutStarted({
-        priceId: price.id,
-        amount: price.amount,
-        currency: price.currency,
+        priceId: productId,
+        amount: price?.amount || 0,
+        currency: price?.currency || "USD",
       });
-      await openPaddleCheckout(price.id, user?.email || undefined);
+
+      // Build checkout URL with query parameters
+      const params = new URLSearchParams({
+        products: productId,
+      });
+      if (user?.email) {
+        params.set("customerEmail", user.email);
+      }
+      if (user?.name) {
+        params.set("customerName", user.name);
+      }
+
+      const checkoutUrl = `/api/polar/checkout?${params.toString()}`;
+
+      await openPolarCheckout({
+        checkoutUrl,
+        theme: "dark",
+        onSuccess: (data) => {
+          const params = new URLSearchParams({ source: "polar" });
+          if (data.orderId) params.set("order_id", data.orderId);
+          if (data.customerId) params.set("customer_id", data.customerId);
+          window.location.href = `/success?${params.toString()}`;
+        },
+      });
     } catch (error) {
       console.error("Checkout error:", error);
       const message = error instanceof Error ? error.message : "Please try again later.";
-      if (message.includes("NEXT_PUBLIC_PADDLE_CLIENT_TOKEN")) {
-        toast.error("Payments not configured", {
-          description: "NEXT_PUBLIC_PADDLE_CLIENT_TOKEN is missing in .env",
-        });
-      } else {
-        toast.error("Checkout failed", {
-          description: message,
-        });
-      }
+      toast.error("Checkout failed", {
+        description: message,
+      });
     } finally {
       setIsCheckingOut(false);
     }

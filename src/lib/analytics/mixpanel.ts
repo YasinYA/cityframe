@@ -138,10 +138,12 @@ export const analytics = {
     transactionId?: string;
   }) => {
     track("Purchase Completed", props);
-    mixpanel.people.set({
-      plan: "pro",
-      $last_purchase: new Date().toISOString(),
-    });
+    if (mixpanel.people) {
+      mixpanel.people.set({
+        plan: "pro",
+        $last_purchase: new Date().toISOString(),
+      });
+    }
   },
 
   // Style/City interactions
