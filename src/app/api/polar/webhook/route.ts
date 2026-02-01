@@ -1,5 +1,8 @@
 import { Webhooks } from '@polar-sh/nextjs';
+import { eq } from 'drizzle-orm';
 import { POLAR_CONFIG } from '@/lib/polar/config';
+import { db } from '@/lib/db/client';
+import { purchases } from '@/lib/db/schema';
 
 export const POST = Webhooks({
   webhookSecret: POLAR_CONFIG.webhookSecret,
@@ -12,10 +15,32 @@ export const POST = Webhooks({
       orderId: data.id,
       customerId: data.customerId,
       productId: data.productId,
+      email: data.customer?.email,
     });
 
-    // Note: Pro status is set via cookies when user returns to success page
-    // This webhook can be used for additional server-side tracking if needed
+    try {
+      // Store purchase in database
+      await db.insert(purchases).values({
+        orderId: data.id,
+        customerId: data.customerId,
+        customerEmail: data.customer?.email ?? 'unknown',
+        productId: data.productId,
+        status: 'paid',
+        paidAt: new Date(),
+      }).onConflictDoUpdate({
+        target: purchases.orderId,
+        set: {
+          status: 'paid',
+          paidAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+
+      console.log(`[Webhook] Purchase recorded for order ${data.id}`);
+    } catch (error) {
+      console.error('[Webhook] Failed to record purchase:', error);
+      // Don't throw - we don't want to fail the webhook
+    }
   },
   onOrderCreated: async (payload) => {
     const { data } = payload;
@@ -30,6 +55,21 @@ export const POST = Webhooks({
       orderId: data.id,
       customerId: data.customerId,
     });
-    // TODO: Handle refund - revoke Pro access if needed
+
+    try {
+      // Mark purchase as refunded in database
+      await db.update(purchases)
+        .set({
+          status: 'refunded',
+          refundedAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .where(eq(purchases.orderId, data.id));
+
+      console.log(`[Webhook] Purchase refunded for order ${data.id}`);
+    } catch (error) {
+      console.error('[Webhook] Failed to record refund:', error);
+      // Don't throw - we don't want to fail the webhook
+    }
   },
 });

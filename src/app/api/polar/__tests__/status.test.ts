@@ -16,6 +16,12 @@ vi.mock('next/headers', () => ({
   })),
 }));
 
+// Mock Polar server verification
+const mockVerifyOrderOwnership = vi.fn();
+vi.mock('@/lib/polar/server', () => ({
+  verifyOrderOwnership: (...args: unknown[]) => mockVerifyOrderOwnership(...args),
+}));
+
 import { GET, POST } from '../status/route';
 
 describe('GET /api/polar/status', () => {
@@ -62,9 +68,20 @@ describe('GET /api/polar/status', () => {
 describe('POST /api/polar/status', () => {
   beforeEach(() => {
     mockCookies.clear();
+    mockVerifyOrderOwnership.mockReset();
   });
 
-  it('sets pro status cookies and returns success', async () => {
+  it('sets pro status cookies when order is verified', async () => {
+    // Mock successful verification
+    mockVerifyOrderOwnership.mockResolvedValue({
+      id: 'order_789',
+      customerId: 'cust_456',
+      customerEmail: 'test@example.com',
+      productId: 'prod_123',
+      status: 'paid',
+      paidAt: new Date('2024-01-15T10:00:00.000Z'),
+    });
+
     const request = new NextRequest('http://localhost:3000/api/polar/status', {
       method: 'POST',
       body: JSON.stringify({
@@ -76,9 +93,48 @@ describe('POST /api/polar/status', () => {
     const response = await POST(request);
     const data = await response.json();
 
+    expect(response.status).toBe(200);
     expect(data.success).toBe(true);
     expect(data.isPro).toBe(true);
-    expect(data.purchasedAt).toBeDefined();
+    expect(data.purchasedAt).toBe('2024-01-15T10:00:00.000Z');
+    expect(mockVerifyOrderOwnership).toHaveBeenCalledWith('order_789', 'cust_456');
+  });
+
+  it('returns 403 when order verification fails', async () => {
+    // Mock failed verification
+    mockVerifyOrderOwnership.mockResolvedValue(null);
+
+    const request = new NextRequest('http://localhost:3000/api/polar/status', {
+      method: 'POST',
+      body: JSON.stringify({
+        customerId: 'fake_customer',
+        orderId: 'fake_order',
+      }),
+    });
+
+    const response = await POST(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(403);
+    expect(data.error).toContain('Order verification failed');
+    expect(mockVerifyOrderOwnership).toHaveBeenCalledWith('fake_order', 'fake_customer');
+  });
+
+  it('returns 403 when customer ID does not match order', async () => {
+    // Mock verification returning null due to customer mismatch
+    mockVerifyOrderOwnership.mockResolvedValue(null);
+
+    const request = new NextRequest('http://localhost:3000/api/polar/status', {
+      method: 'POST',
+      body: JSON.stringify({
+        customerId: 'wrong_customer',
+        orderId: 'order_789',
+      }),
+    });
+
+    const response = await POST(request);
+
+    expect(response.status).toBe(403);
   });
 
   it('returns 400 when customerId is missing', async () => {

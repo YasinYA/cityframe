@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import Replicate from "replicate";
 import sharp from "sharp";
+import { headers } from "next/headers";
 import { DeviceType, CropPosition } from "@/types";
 import { DEVICE_PRESETS } from "@/lib/map/styles";
+import { auth } from "@/lib/auth";
+import { checkRateLimit, getRateLimitHeaders } from "@/lib/redis/rateLimit";
 
 interface GenerateWallpaperRequest {
   image: string; // base64 data URL from client
@@ -10,6 +13,20 @@ interface GenerateWallpaperRequest {
   devices: DeviceType[];
   cropPosition?: CropPosition;
 }
+
+// Rate limit: 20 AI generations per user per hour
+const USER_RATE_LIMIT = {
+  maxRequests: 20,
+  windowSeconds: 3600,
+  prefix: "ratelimit:ai-gen:user",
+};
+
+// Rate limit: 50 AI generations per IP per hour
+const IP_RATE_LIMIT = {
+  maxRequests: 50,
+  windowSeconds: 3600,
+  prefix: "ratelimit:ai-gen:ip",
+};
 
 // Map CropPosition to sharp position string
 function getSharpPosition(cropPosition: CropPosition): string {
@@ -67,6 +84,41 @@ async function upscaleImage(imageBuffer: Buffer, scale: number = 4): Promise<Buf
 
 export async function POST(request: NextRequest) {
   try {
+    // Get client IP for rate limiting
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+               request.headers.get("x-real-ip") ||
+               "unknown";
+
+    // Check IP rate limit first
+    const ipLimit = await checkRateLimit(ip, IP_RATE_LIMIT);
+    if (!ipLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429, headers: getRateLimitHeaders(ipLimit) }
+      );
+    }
+
+    // Check authentication
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session?.user?.email) {
+      return NextResponse.json(
+        { error: "Authentication required. Please sign in to generate wallpapers." },
+        { status: 401 }
+      );
+    }
+
+    // Check user-specific rate limit
+    const userLimit = await checkRateLimit(session.user.email, USER_RATE_LIMIT);
+    if (!userLimit.allowed) {
+      return NextResponse.json(
+        { error: "You've reached the hourly generation limit. Please try again later." },
+        { status: 429, headers: getRateLimitHeaders(userLimit) }
+      );
+    }
+
     const body: GenerateWallpaperRequest = await request.json();
     const { image, devices, cropPosition = "center" } = body;
 
@@ -75,6 +127,14 @@ export async function POST(request: NextRequest) {
     if (!image || !devices || devices.length === 0) {
       return NextResponse.json(
         { error: "Missing required fields: image, devices" },
+        { status: 400 }
+      );
+    }
+
+    // Validate image size (max 10MB base64)
+    if (image.length > 10 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: "Image too large. Maximum size is 10MB." },
         { status: 400 }
       );
     }

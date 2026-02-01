@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { eq, and } from "drizzle-orm";
+import { headers } from "next/headers";
 import { db } from "@/lib/db/client";
 import { jobs, images } from "@/lib/db/schema";
+import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +24,30 @@ export async function GET(
     if (!job) {
       return NextResponse.json({ error: "Job not found" }, { status: 404 });
     }
+
+    // Authorization check: verify job ownership
+    // Jobs with userId require authentication and ownership verification
+    if (job.userId) {
+      const session = await auth.api.getSession({
+        headers: await headers(),
+      });
+
+      if (!session?.user?.id) {
+        return NextResponse.json(
+          { error: "Authentication required" },
+          { status: 401 }
+        );
+      }
+
+      if (job.userId !== session.user.id) {
+        return NextResponse.json(
+          { error: "Access denied" },
+          { status: 403 }
+        );
+      }
+    }
+    // Note: Jobs without userId (legacy/anonymous) remain accessible
+    // This maintains backward compatibility
 
     if (job.status !== "completed") {
       return NextResponse.json(

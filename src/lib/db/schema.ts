@@ -43,6 +43,20 @@ export const images = pgTable("images", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Purchases table - tracks Polar payments and refunds
+export const purchases = pgTable("purchases", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  orderId: varchar("order_id", { length: 255 }).unique().notNull(),
+  customerId: varchar("customer_id", { length: 255 }).notNull(),
+  customerEmail: varchar("customer_email", { length: 255 }).notNull(),
+  productId: varchar("product_id", { length: 255 }).notNull(),
+  status: varchar("status", { length: 20 }).default("paid").notNull(), // paid, refunded
+  paidAt: timestamp("paid_at"),
+  refundedAt: timestamp("refunded_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Legacy users table - kept for migration, will be deprecated
 // Better Auth uses its own "user" table
 export const users = pgTable("users", {
@@ -62,3 +76,5 @@ export type Image = typeof images.$inferSelect;
 export type NewImage = typeof images.$inferInsert;
 export type LegacyUser = typeof users.$inferSelect;
 export type NewLegacyUser = typeof users.$inferInsert;
+export type Purchase = typeof purchases.$inferSelect;
+export type NewPurchase = typeof purchases.$inferInsert;

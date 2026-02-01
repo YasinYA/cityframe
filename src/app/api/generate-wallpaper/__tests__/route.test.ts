@@ -25,6 +25,36 @@ vi.mock('replicate', () => {
   };
 });
 
+// Mock next/headers
+vi.mock('next/headers', () => ({
+  headers: vi.fn(() => new Headers()),
+}));
+
+// Mock auth
+vi.mock('@/lib/auth', () => ({
+  auth: {
+    api: {
+      getSession: vi.fn().mockResolvedValue({
+        user: {
+          id: 'test-user-id',
+          email: 'test@example.com',
+        },
+      }),
+    },
+  },
+}));
+
+// Mock rate limiting
+vi.mock('@/lib/redis/rateLimit', () => ({
+  checkRateLimit: vi.fn().mockResolvedValue({
+    allowed: true,
+    remaining: 10,
+    resetAt: Date.now() + 3600,
+    limit: 20,
+  }),
+  getRateLimitHeaders: vi.fn().mockReturnValue({}),
+}));
+
 // Mock fetch for upscaled image download
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
@@ -228,5 +258,71 @@ describe('POST /api/generate-wallpaper', () => {
 
     const data = await response.json();
     expect(data.wallpapers).toHaveLength(6);
+  });
+
+  it('returns 401 when not authenticated', async () => {
+    // Import to get access to the mock
+    const { auth } = await import('@/lib/auth');
+    vi.mocked(auth.api.getSession).mockResolvedValueOnce(null);
+
+    const request = new NextRequest('http://localhost:3000/api/generate-wallpaper', {
+      method: 'POST',
+      body: JSON.stringify({
+        image: VALID_IMAGE_BASE64,
+        style: 'midnight-gold',
+        devices: ['iphone'],
+      }),
+    });
+
+    const response = await POST(request);
+    expect(response.status).toBe(401);
+
+    const data = await response.json();
+    expect(data.error).toContain('Authentication required');
+  });
+
+  it('returns 429 when rate limited', async () => {
+    const { checkRateLimit } = await import('@/lib/redis/rateLimit');
+    vi.mocked(checkRateLimit).mockResolvedValueOnce({
+      allowed: false,
+      remaining: 0,
+      resetAt: Date.now() + 3600,
+      limit: 50,
+    });
+
+    const request = new NextRequest('http://localhost:3000/api/generate-wallpaper', {
+      method: 'POST',
+      body: JSON.stringify({
+        image: VALID_IMAGE_BASE64,
+        style: 'midnight-gold',
+        devices: ['iphone'],
+      }),
+    });
+
+    const response = await POST(request);
+    expect(response.status).toBe(429);
+
+    const data = await response.json();
+    expect(data.error).toContain('Too many requests');
+  });
+
+  it('returns 400 when image is too large', async () => {
+    // Create a large image string (over 10MB)
+    const largeImage = 'data:image/png;base64,' + 'A'.repeat(11 * 1024 * 1024);
+
+    const request = new NextRequest('http://localhost:3000/api/generate-wallpaper', {
+      method: 'POST',
+      body: JSON.stringify({
+        image: largeImage,
+        style: 'midnight-gold',
+        devices: ['iphone'],
+      }),
+    });
+
+    const response = await POST(request);
+    expect(response.status).toBe(400);
+
+    const data = await response.json();
+    expect(data.error).toContain('Image too large');
   });
 });

@@ -20,8 +20,67 @@ export interface RateLimitResult {
   limit: number;
 }
 
+// In-memory fallback rate limiter when Redis is unavailable
+// Uses a simple sliding window with Map storage
+const memoryStore = new Map<string, { count: number; windowStart: number }>();
+
+// Cleanup old entries every 5 minutes
+const CLEANUP_INTERVAL = 5 * 60 * 1000;
+let lastCleanup = Date.now();
+
+function cleanupMemoryStore(windowSeconds: number): void {
+  const now = Math.floor(Date.now() / 1000);
+  const cutoff = now - windowSeconds * 2; // Keep entries for 2x window to be safe
+
+  for (const [key, value] of memoryStore.entries()) {
+    if (value.windowStart < cutoff) {
+      memoryStore.delete(key);
+    }
+  }
+}
+
+function checkMemoryRateLimit(
+  identifier: string,
+  config: RateLimitConfig
+): RateLimitResult {
+  const { maxRequests, windowSeconds, prefix = "ratelimit" } = config;
+  const key = `${prefix}:${identifier}`;
+  const now = Math.floor(Date.now() / 1000);
+
+  // Periodic cleanup
+  if (Date.now() - lastCleanup > CLEANUP_INTERVAL) {
+    cleanupMemoryStore(windowSeconds);
+    lastCleanup = Date.now();
+  }
+
+  const existing = memoryStore.get(key);
+
+  if (!existing || existing.windowStart < now - windowSeconds) {
+    // New window
+    memoryStore.set(key, { count: 1, windowStart: now });
+    return {
+      allowed: true,
+      remaining: maxRequests - 1,
+      resetAt: now + windowSeconds,
+      limit: maxRequests,
+    };
+  }
+
+  // Existing window - increment count
+  existing.count += 1;
+  const allowed = existing.count <= maxRequests;
+  const remaining = Math.max(0, maxRequests - existing.count);
+
+  return {
+    allowed,
+    remaining,
+    resetAt: existing.windowStart + windowSeconds,
+    limit: maxRequests,
+  };
+}
+
 /**
- * Check rate limit using Redis sliding window
+ * Check rate limit using Redis sliding window with in-memory fallback
  * @param identifier - Unique identifier for the rate limit (e.g., IP, email, user ID)
  * @param config - Rate limit configuration
  * @returns Rate limit result
@@ -55,13 +114,9 @@ export async function checkRateLimit(
     const results = await pipeline.exec();
 
     if (!results) {
-      // Redis error - fail open (allow request)
-      return {
-        allowed: true,
-        remaining: maxRequests - 1,
-        resetAt: now + windowSeconds,
-        limit: maxRequests,
-      };
+      // Redis error - use in-memory fallback
+      console.warn("[RateLimit] Redis returned null, using memory fallback");
+      return checkMemoryRateLimit(identifier, config);
     }
 
     // Get count from zcard result (index 1, value at index 1)
@@ -76,14 +131,9 @@ export async function checkRateLimit(
       limit: maxRequests,
     };
   } catch (error) {
-    console.error("Rate limit check failed:", error);
-    // Fail open - allow request if Redis is down
-    return {
-      allowed: true,
-      remaining: maxRequests - 1,
-      resetAt: now + windowSeconds,
-      limit: maxRequests,
-    };
+    console.error("Rate limit check failed, using memory fallback:", error);
+    // Use in-memory fallback instead of failing open
+    return checkMemoryRateLimit(identifier, config);
   }
 }
 
@@ -107,5 +157,13 @@ export async function resetRateLimit(
 ): Promise<void> {
   const redis = getRedis();
   const key = `${prefix}:${identifier}`;
-  await redis.del(key);
+
+  try {
+    await redis.del(key);
+  } catch {
+    // Also clear from memory store
+  }
+
+  // Always clear from memory store
+  memoryStore.delete(key);
 }
