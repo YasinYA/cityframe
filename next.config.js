@@ -11,42 +11,41 @@ const nextConfig = {
   output: 'standalone',
   // Security headers
   async headers() {
-    return [
+    const securityHeaders = [
       {
-        // Apply to all routes
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-          {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()',
-          },
-        ],
+        key: 'X-Content-Type-Options',
+        value: 'nosniff',
       },
       {
-        // HSTS only in production (via HTTPS)
+        key: 'X-Frame-Options',
+        value: 'DENY',
+      },
+      {
+        key: 'X-XSS-Protection',
+        value: '1; mode=block',
+      },
+      {
+        key: 'Referrer-Policy',
+        value: 'strict-origin-when-cross-origin',
+      },
+      {
+        key: 'Permissions-Policy',
+        value: 'camera=(), microphone=(), geolocation=()',
+      },
+    ];
+
+    // Add HSTS only in production (via HTTPS)
+    if (process.env.NODE_ENV === 'production') {
+      securityHeaders.push({
+        key: 'Strict-Transport-Security',
+        value: 'max-age=31536000; includeSubDomains',
+      });
+    }
+
+    return [
+      {
         source: '/(.*)',
-        headers: process.env.NODE_ENV === 'production' ? [
-          {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains',
-          },
-        ] : [],
+        headers: securityHeaders,
       },
     ];
   },
@@ -74,10 +73,6 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     // Reduce quality slightly for better performance
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
-  },
-  eslint: {
-    // ESLint 9 is incompatible with Next.js 14 - run lint separately
-    ignoreDuringBuilds: true,
   },
   typescript: {
     // Type check separately for faster builds
