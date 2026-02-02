@@ -22,7 +22,7 @@ export const POST = Webhooks({
       // Store purchase in database
       await db.insert(purchases).values({
         orderId: data.id,
-        customerId: data.customerId,
+        customerId: data.customerId ?? 'anonymous',
         customerEmail: data.customer?.email ?? 'unknown',
         productId: data.productId,
         status: 'paid',
