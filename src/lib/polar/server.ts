@@ -51,9 +51,9 @@ export async function verifyOrder(orderId: string): Promise<VerifiedOrder | null
 
     return {
       id: order.id,
-      customerId: order.customerId,
+      customerId: order.customerId ?? 'anonymous',
       customerEmail: order.customer.email ?? 'unknown',
-      productId: order.productId,
+      productId: order.productId ?? 'unknown',
       status: order.status,
       paidAt: order.createdAt ? new Date(order.createdAt) : null,
     };
