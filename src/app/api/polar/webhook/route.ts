@@ -20,11 +20,17 @@ export const POST = Webhooks({
 
     try {
       // Store purchase in database
+      const orderId = data.id;
+      if (!orderId) {
+        console.error('[Webhook] Order ID is missing');
+        return;
+      }
+
       await db.insert(purchases).values({
-        orderId: data.id,
+        orderId,
         customerId: data.customerId ?? 'anonymous',
         customerEmail: data.customer?.email ?? 'unknown',
-        productId: data.productId,
+        productId: data.productId ?? 'unknown',
         status: 'paid',
         paidAt: new Date(),
       }).onConflictDoUpdate({
@@ -56,6 +62,12 @@ export const POST = Webhooks({
       customerId: data.customerId,
     });
 
+    const orderId = data.id;
+    if (!orderId) {
+      console.error('[Webhook] Order ID is missing for refund');
+      return;
+    }
+
     try {
       // Mark purchase as refunded in database
       await db.update(purchases)
@@ -64,7 +76,7 @@ export const POST = Webhooks({
           refundedAt: new Date(),
           updatedAt: new Date(),
         })
-        .where(eq(purchases.orderId, data.id));
+        .where(eq(purchases.orderId, orderId));
 
       console.log(`[Webhook] Purchase refunded for order ${data.id}`);
     } catch (error) {
