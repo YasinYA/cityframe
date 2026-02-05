@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Check, ArrowRight, MapPin, Sparkles, Download, Image as ImageIcon, Monitor, Languages, Focus, Video, Home, X, Menu } from "lucide-react";
 import { STYLE_CONFIGS } from "@/lib/map/styles";
 import { motion, AnimatePresence } from "framer-motion";
+import { analytics } from "@/lib/analytics/mixpanel";
 
 // Import extracted components
 import { HeroDeviceCarousel } from "./HeroDeviceCarousel";
@@ -22,8 +23,16 @@ export default function PreLaunchPage() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const formStartedRef = useRef<Record<string, boolean>>({});
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const trackFormStarted = (location: string) => {
+    if (!formStartedRef.current[location]) {
+      formStartedRef.current[location] = true;
+      analytics.waitlistFormStarted(location);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent, location: string = "hero") => {
     e.preventDefault();
     if (!email) return;
     setStatus("loading");
@@ -39,11 +48,14 @@ export default function PreLaunchPage() {
         throw new Error(data.error || "Something went wrong");
       }
       setStatus("success");
+      analytics.waitlistSignupCompleted({ email, name: name || undefined, location });
       setName("");
       setEmail("");
     } catch (err) {
       setStatus("error");
-      setErrorMessage(err instanceof Error ? err.message : "Something went wrong");
+      const errorMsg = err instanceof Error ? err.message : "Something went wrong";
+      setErrorMessage(errorMsg);
+      analytics.waitlistSignupFailed({ error: errorMsg, location });
     }
   };
 
@@ -149,13 +161,14 @@ export default function PreLaunchPage() {
                     <span className="font-semibold">You&apos;re on the list!</span>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-md mx-auto lg:mx-0">
+                  <form onSubmit={(e) => handleSubmit(e, "hero")} className="flex flex-col gap-3 max-w-md mx-auto lg:mx-0">
                     <div className="flex flex-col sm:flex-row gap-3">
                       <Input
                         type="text"
                         placeholder="Your name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
+                        onFocus={() => trackFormStarted("hero")}
                         className="h-14 text-base rounded-xl flex-1"
                         required
                       />
@@ -164,6 +177,7 @@ export default function PreLaunchPage() {
                         placeholder="Enter your email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        onFocus={() => trackFormStarted("hero")}
                         className="h-14 text-base rounded-xl flex-1"
                         required
                       />
@@ -465,7 +479,10 @@ export default function PreLaunchPage() {
               <Button
                 size="lg"
                 className="w-full h-12 md:h-14 text-base md:text-lg rounded-xl"
-                onClick={() => document.getElementById('get-started')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => {
+                  analytics.landingCtaClicked({ cta: "join_launch_list", location: "pricing" });
+                  document.getElementById('get-started')?.scrollIntoView({ behavior: 'smooth' });
+                }}
               >
                 Join the launch list
                 <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-2" />
@@ -516,12 +533,13 @@ export default function PreLaunchPage() {
                   <span className="font-semibold text-sm md:text-base">You&apos;re on the list!</span>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
+                <form onSubmit={(e) => handleSubmit(e, "footer_cta")} className="space-y-3 md:space-y-4">
                   <Input
                     type="text"
                     placeholder="Your name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    onFocus={() => trackFormStarted("footer_cta")}
                     className="h-12 md:h-14 text-sm md:text-base rounded-xl"
                     required
                   />
@@ -530,6 +548,7 @@ export default function PreLaunchPage() {
                     placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    onFocus={() => trackFormStarted("footer_cta")}
                     className="h-12 md:h-14 text-sm md:text-base rounded-xl"
                     required
                   />
@@ -570,6 +589,7 @@ export default function PreLaunchPage() {
               href="https://x.com/cityframeapp"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => analytics.socialLinkClicked("x")}
               className="w-9 h-9 rounded-full bg-muted/50 hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
               aria-label="Follow us on X"
             >
@@ -581,6 +601,7 @@ export default function PreLaunchPage() {
               href="https://instagram.com/cityframeapp"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => analytics.socialLinkClicked("instagram")}
               className="w-9 h-9 rounded-full bg-muted/50 hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
               aria-label="Follow us on Instagram"
             >
@@ -594,6 +615,7 @@ export default function PreLaunchPage() {
               href="https://pinterest.com/cityframeapp"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => analytics.socialLinkClicked("pinterest")}
               className="w-9 h-9 rounded-full bg-muted/50 hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
               aria-label="Follow us on Pinterest"
             >
@@ -605,6 +627,7 @@ export default function PreLaunchPage() {
               href="https://reddit.com/r/cityframeapp"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => analytics.socialLinkClicked("reddit")}
               className="w-9 h-9 rounded-full bg-muted/50 hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
               aria-label="Join us on Reddit"
             >

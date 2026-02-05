@@ -169,4 +169,40 @@ export const analytics = {
   }) => {
     track("Device Toggled", props);
   },
+
+  // Pre-launch / Waitlist events
+  waitlistFormStarted: (location: string) => {
+    track("Waitlist Form Started", { location });
+  },
+
+  waitlistSignupCompleted: (props: {
+    email: string;
+    name?: string;
+    location: string;
+  }) => {
+    track("Waitlist Signup Completed", props);
+  },
+
+  waitlistSignupFailed: (props: {
+    error: string;
+    location: string;
+  }) => {
+    track("Waitlist Signup Failed", props);
+  },
+
+  // Landing page engagement
+  landingSectionViewed: (section: string) => {
+    track("Landing Section Viewed", { section });
+  },
+
+  landingCtaClicked: (props: {
+    cta: string;
+    location: string;
+  }) => {
+    track("Landing CTA Clicked", props);
+  },
+
+  socialLinkClicked: (platform: string) => {
+    track("Social Link Clicked", { platform });
+  },
 };
